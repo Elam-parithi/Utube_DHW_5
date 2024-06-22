@@ -5,34 +5,47 @@
 
 from utube_DHW_aux_modules import *
 from streamlit_option_menu import option_menu
+from annotated_text import annotated_text
+
 from config_page import config_page
 from home_page import home_page
+from data_storage import Data_storage_tab
 from SQL_Analysis import query_sql
 from analyze_page import analyze_page
 from about_page import about_page
 
 
-with st.sidebar:
-    selected_option = option_menu('Menu', ["Config", "Home", "MySQL Analysis", "Analyze", "About"],
-                                  icons=['gear', 'house', "list-task", 'info-square'],
-                                  default_index=1, menu_icon="cast")  # orientation="horizontal"
+# Streamlit page configuration
+st.set_page_config(
+    page_title="Utube DHW 5",
+    page_icon=r"Icons/Calendula.ico",
+    layout='wide',
+)
 
 
-if selected_option == "Config":
+# Streamlit page title and author annotation
+st.title("YouTube Data Harvesting and Warehousing")
+annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)',
+                       'Data Scientist', "#8ef"))
+selected_option = option_menu('', ["config", "home", "storage", "analysis", "plot", "about"],
+                              icons=['gear', 'house', "database", "list-task", 'bar', 'info-square'],
+                              default_index=1, menu_icon="cast", orientation="horizontal")  # orientation="horizontal"
+
+if selected_option == "config":
     config_page()
 
-elif selected_option == "Home":
+elif selected_option == "home":
     home_page()
 
-elif selected_option == "MySQL Analysis":
+elif selected_option == "storage":
+    Data_storage_tab()
+
+elif selected_option == "analysis":
     query_sql()
 
-elif selected_option == "Analyze":
+elif selected_option == "plot":
     analyze_page()
 
-elif selected_option == "About":
+elif selected_option == "about":
     about_page()
-
-
-    
 

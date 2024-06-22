@@ -74,7 +74,7 @@ class AnalyserClass:
         self.process_comments(comment_texts)
 
 
-filename = "xtracted_data/Sahi Siva-2024-06-02-14-54-06.json"
+filename = "extracted_data/Sahi Siva-2024-06-02-14-54-06.json"
 analyser = AnalyserClass(filename)
 analyser.convert_and_process()
 analyser.plot_data()

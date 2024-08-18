@@ -1,7 +1,7 @@
 
 # YouTube Data Harvesting and Warehousing
 
-![LinkedIn](https://img.shields.io/badge/-LinkedIn-blue?logo=linkedin&style=social) [Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)
+![LinkedIn](https://img.shields.io/badge/-LinkedIn-blue?logo=linkedin&style=social)(https://www.linkedin.com/in/elamparithi-t/)
 
 ## Overview
 

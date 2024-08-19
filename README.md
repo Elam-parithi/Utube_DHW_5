@@ -1,7 +1,7 @@
 
 # YouTube Data Harvesting and Warehousing
 
-![LinkedIn](https://img.shields.io/badge/-LinkedIn-blue?logo=linkedin&style=social) [Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)
+![LinkedIn](https://img.shields.io/badge/-LinkedIn-blue?logo=linkedin&style=social)(https://www.linkedin.com/in/elamparithi-t/)
 
 ## Overview
 
@@ -39,8 +39,8 @@ This project focuses on harvesting data from YouTube and warehousing it using SQ
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/Elam-parithi/Utube_DHW_4.git
-    cd YouTube-Data-Harvesting-and-Warehousing
+    git clone https://github.com/Elam-parithi/Utube_DHW_5.git
+    cd Utube_DHW_5
     ```
 
 2. Create a virtual environment:

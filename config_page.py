@@ -1,9 +1,10 @@
 # config_page.py
 # page one of the application not default page. but API_key verification is done here and SQL configuration done here.
 
-from utube_DHW_aux_modules import *
+
 import data_con as my_sql
 from pymongo import MongoClient
+from utube_DHW_aux_modules import *
 
 
 def config_page():
@@ -38,7 +39,7 @@ def config_page():
             i.e: for local DB: sqlite:///Database_storage/Utube_DHW-5.db
             for external  SQL: mysql+pymysql://username:password@host:port/dbname
             """
-            st.code(paragraphs, language= 'text')
+            st.code(paragraphs, language='text')
             sql_url = st.text_input("Database_URL", key="url",
                                     value=st.session_state['mysql_config'])
             if st.button(label='Verify', key='sql-verify'):
@@ -55,7 +56,7 @@ def config_page():
             Enter MongoDB server details in following format or just copy paste the URI.
             i.e: mongodb://username:password@host:port/dbname
             """
-            st.code(paragraphs, language= 'text')
+            st.code(paragraphs, language='text')
             mongo_uri = st.text_input("MongoDB URI:", key="mongo-url",
                                       value=st.session_state['mongo_config'])
             if st.button(label='Verify', key='mongo-verify'):
@@ -67,4 +68,3 @@ def config_page():
                     st.success("Connected to MongoDB!")
                 except Exception as e:
                     st.error(f"Failed to connect to MongoDB: {e}")
-

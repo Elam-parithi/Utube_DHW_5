@@ -1,18 +1,20 @@
+# Your Credentials your responsibility.
 
-# Your Credentials your responsiblity.
+
+import streamlit as st
 
 """
 This code contains default api keys should not be disclosed. protected using secret.
 added to .git ignore.
 
 use your YouTube API credentials to use this application. you don't need to enter the credentials directly here. 
-But yout can add it at the time of execution in UI.
+But your can add it at the time of execution in UI.
 """
 
-SQL_host = 'localhost'
-SQL_port = 3306
-SQL_user = ''
+# database_url = 'sqlite:///my_database.db'  # SQLite
+# database_url = 'mysql+pymysql://user:password@host/dbname'
+# sqlite:///Database_storage/Utube_DHW-5.db
 
-SQL_pswd = ''
-SQL_DB = ''
-
+api_key = st.secrets["api_key"]
+database_uri = st.secrets["database_uri"]
+mongo_uri = st.secrets["mongo_uri"]

@@ -3,6 +3,8 @@ temp_credentials.py
 logs/Utube_website-2024-08-19.log
 Database_storage/Utube_DHW-4
 Database_storage/Utube_DHW-5.db
+.streamlit/
+.streamlit/secrets.toml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

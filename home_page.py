@@ -3,14 +3,15 @@
 # this is the default landing page for my application.
 # This python code contains a function called home_page() which is called in Utube_website.py
 
-import streamlit as st
-import json
+
 import os
+import json
+import streamlit as st
 from datetime import datetime
 from streamlit_tags import st_tags
 from utube_DHW_aux_modules import yt, key_hide
 
-directory_path = r"xtratced_data"
+directory_path = r"extracted_data"
 
 
 def save_dict_to_json(channel_data_e, item):
@@ -41,7 +42,7 @@ def home_page():
     file_list = []
     with st.form(key="ChannelID_names", clear_on_submit=False):
         keywords = st_tags(
-            label="Channel ID/names (max 10):",
+            label="Channel ID/names (programmed-limit 10):",
             maxtags=10,
             key="keywords",
             value=['guvi', 'UCgLnPO7GYxq47FzF5j3TSlA']
@@ -62,7 +63,7 @@ def home_page():
                     channel_id = item
                 chid_list.append(channel_id)
 
-            st.info(chid_list)
+            st.write('All channel ID: ', chid_list)
             file_list = []
 
             for item in chid_list:
@@ -80,18 +81,5 @@ def home_page():
                     except Exception as e:
                         st.error(f"Error extracting data for channel ID {item}: {e}")
 
+    #st.session_state.file_lists = file_list
     st.write("Files:", file_list)
-
-    # Columns for file processing and SQL upload
-    for tie in file_list:
-        tie_container = st.container()
-        v1, v2 = tie_container.columns(2)
-        v1.success(tie)
-        try:
-            with open(tie, "r") as file:
-                data = json.load(file)
-                v1.json(data, expanded=False)
-            upload_data_to_sql(tie)
-            v2.info("Data uploaded to SQL")
-        except Exception as e:
-            v1.error(f"Error reading or uploading file {tie}: {e}")

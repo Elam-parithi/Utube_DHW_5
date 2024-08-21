@@ -2,10 +2,11 @@
 # this module is to connect with SQL server and upload data.
 
 import re
-from datetime import datetime
-import pandas as pd
 import json
+import pandas as pd
+from datetime import datetime
 from sqlalchemy import create_engine
+from sqlalchemy.exc import SQLAlchemyError
 
 
 def check_database_availability(mysql_uri):
@@ -15,7 +16,7 @@ def check_database_availability(mysql_uri):
         connection.close()
         print(f"Successfully connected to the database URI.")
         return True
-    except Error as e:
+    except SQLAlchemyError as e:
         print(f"Error: {e}")
         return False
 
@@ -38,8 +39,6 @@ def convert_iso_duration_to_seconds(iso_duration_str):
     return total_seconds
 
 
-# database_url = 'sqlite:///my_database.db'  # SQLite
-# database_url = 'mysql+pymysql://user:password@host/dbname'
 def upload_json(table_name, json_data, database_url):
     data = json.loads(json_data)
     df = pd.DataFrame(data)

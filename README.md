@@ -89,4 +89,4 @@ OR directly run the application file `Utube_website.py`:
 Feel free to reach out via [LinkedIn](https://www.linkedin.com/in/elamparithi-t/).
 
 ---
-Developed by Elamparithi T
+Developed by ![Elamparithi](https://www.linkedin.com/in/elamparithi-t/)

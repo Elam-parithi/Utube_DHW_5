@@ -2,10 +2,12 @@
 
 # This is data_storage here we process the data we extracted in home page.
 
+import os
+import json
 import pandas as pd
 import streamlit as st
-import json
 from data_con import upload_json
+from streamlit_tags import st_tags
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -77,13 +79,40 @@ def load_json_from_file(filename):
         return {}
 
 
+def create_download_buttons(filepaths):
+    for filepath in filepaths:
+        filename = os.path.basename(filepath)
+        with open(filepath, "rb") as file:
+            file_data = file.read()
+        st.download_button(
+            label=f"Download {filename}",
+            data=file_data,
+            file_name=filename,
+            mime="application/octet-stream"
+        )
+
+
 def Data_storage_tab():
     """
     Data_storage_processing. processing the data in streamlit.
     """
     st.subheader("Non-Volatile Data Storage processing.")
-    extracted_json_data = "daat"
-    storage_option = st.selectbox('select Storage option', ['sqlite', 'MySQL', 'MongoDB', 'JSON'])
-    if storage_option == 'sqlite':
-        pass
-    st.json(extracted_json_data)
+    # default attribute, change to none
+    st.session_state["file_lists"] = ["extracted_data/Madras foodie-20240821-181855.json", "extracted_data/Madras foodie-20240821-190137.json"]
+    file_columns, storage_columns = st.columns(2)
+    with file_columns:
+        selected_files = st_tags(
+            label="Extracted filenames:",
+            maxtags=10,
+            key="keywords",
+            value=st.session_state.get("file_lists")
+        )
+        create_download_buttons(selected_files)
+
+    with storage_columns:
+        storage_option = st.selectbox('select Storage option', ['SQL', 'MongoDB'])
+        # check this option is ready or not
+        st.write(f"upload of all the following: \n {selected_files}")
+        st.success(storage_option)
+
+        # button to procced with option.

@@ -5,6 +5,10 @@ Database_storage/Utube_DHW-4
 Database_storage/Utube_DHW-5.db
 .streamlit/
 .streamlit/secrets.toml
+Scripts
+.idea
+pyvenv.cfg
+extracted_data/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

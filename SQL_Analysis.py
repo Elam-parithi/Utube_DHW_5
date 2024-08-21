@@ -4,11 +4,11 @@ This is for Querying the SQL table and getting the output.
 """
 
 # Import necessary libraries and functions
-import streamlit as st
-import pandas as pd
-from sqlalchemy import text as text_conv
-from sqlalchemy import create_engine
 
+import pandas as pd
+import streamlit as st
+from sqlalchemy import create_engine
+from sqlalchemy import text as text_conv
 
 def get_sqlalchemy_engine():
     return create_engine(st.session_state["mysql_config"])

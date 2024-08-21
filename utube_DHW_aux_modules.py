@@ -30,17 +30,18 @@ database_URI = temp_credentials.database_uri
 MongoDB_URI = temp_credentials.mongo_uri
 
 # Streamlit session state initialization
-if "api_key" not in st.session_state:
-    st.session_state["api_key"] = API_key
-if "API_key_pass" not in st.session_state:
-    st.session_state["API_key_pass"] = None
-if "mysql_config" not in st.session_state:
-    st.session_state["mysql_config"] = database_URI
-if "mongo_config" not in st.session_state:
-    st.session_state['mongo_config'] = MongoDB_URI
+configurations = {
+    "api_key":API_key,
+    "API_key_pass":None,
+    "mysql_config":database_URI,
+    "mongo_config":MongoDB_URI,
+    "file_lists": None,
+}
 
+for key, value in configurations.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
 
 # Instantiate YouTubeDataExtractor if API key is available
 if st.session_state["API_key_pass"]:
     tube = yt.YouTubeDataExtractor(API_key)
-

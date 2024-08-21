@@ -11,7 +11,7 @@ from config_page import config_page
 from home_page import home_page
 from data_storage import Data_storage_tab
 from SQL_Analysis import query_sql
-from analyze_page import analyze_page
+from ploting_page import analyze_page
 from about_page import about_page
 
 
@@ -27,8 +27,9 @@ st.set_page_config(
 st.title("YouTube Data Harvesting and Warehousing")
 annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)',
                        'Data Scientist', "#8ef"))
+st.divider()
 selected_option = option_menu('', ["config", "home", "storage", "analysis", "plot", "about"],
-                              icons=['gear', 'house', "database", "list-task", 'bar', 'info-square'],
+                              icons=['gear', 'house', "database", "list-task", 'bi-bar-chart', 'info-square'],
                               default_index=1, menu_icon="cast", orientation="horizontal")  # orientation="horizontal"
 
 if selected_option == "config":

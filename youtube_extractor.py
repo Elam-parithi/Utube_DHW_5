@@ -6,9 +6,20 @@
 
 import requests
 from re import compile
-from googleapiclient.discovery import build
-from googleapiclient.errors import HttpError
 
+import streamlit as st
+
+try:
+    from googleapiclient.discovery import build
+    from googleapiclient.errors import HttpError
+except ModuleNotFoundError as e:
+    st.write(e)
+    st.write("importing modules")
+    import os
+    os.system("cd wheel_packages")
+    os.system("python -m pip install *.whl")
+    os.system("cd ..")
+    st.write("modules imported")
 
 def check_api_key(function_api_key, method=0):
     if method == 0:

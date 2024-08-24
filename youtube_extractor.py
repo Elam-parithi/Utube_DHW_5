@@ -19,6 +19,8 @@ except ModuleNotFoundError as e:
     os.system("cd wheel_packages")
     os.system("python -m pip install *.whl")
     os.system("cd ..")
+    from googleapiclient.discovery import build
+    from googleapiclient.errors import HttpError
     st.write("modules imported")
 
 def check_api_key(function_api_key, method=0):

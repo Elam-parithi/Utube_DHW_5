@@ -31,8 +31,8 @@ MongoDB_URI = temp_credentials.mongo_uri
 
 # Streamlit session state initialization
 configurations = {
-    "api_key":API_key,
-    "API_key_pass":None,
+    "api_key" : API_key,
+    "API_key_pass" : None,
     "mysql_config":database_URI,
     "mongo_config":MongoDB_URI,
     "file_lists": None,

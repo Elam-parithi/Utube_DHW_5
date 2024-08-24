@@ -1,4 +1,3 @@
-
 """
 Analyzer was pushed to new project.
 2change
@@ -16,7 +15,7 @@ import matplotlib.pyplot as plt
 class AnalyserClass:
     def __init__(self, json_filename):
         self.filename = json_filename
-        self.sentiment_data = {'details': [], 'neg': [], 'neu': [], 'pos': [], 'compound': []}
+        self.sentiment_data = {'details':[], 'neg':[], 'neu':[], 'pos':[], 'compound':[]}
         if not nltk.downloader.Downloader().is_installed("vader_lexicon"):
             nltk.download('vader_lexicon')
 
@@ -74,7 +73,8 @@ class AnalyserClass:
         self.process_comments(comment_texts)
 
 
-filename = "extracted_data/Sahi Siva-2024-06-02-14-54-06.json"
-analyser = AnalyserClass(filename)
-analyser.convert_and_process()
-analyser.plot_data()
+if __name__ == "__main__":
+    filename = "extracted_data/Madras foodie-20240821-181855.json"
+    analyser = AnalyserClass(filename)
+    analyser.convert_and_process()
+    analyser.plot_data()

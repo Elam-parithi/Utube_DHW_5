@@ -1,0 +1,9 @@
+nltk
+pymongo
+sqlalchemy
+
+streamlit
+streamlit-tags
+st-annotated-text
+streamlit-option-menu
+google-api-python-client

@@ -19,4 +19,4 @@ try:
   mongo_uri = st.secrets["mongo_uri"]
 except KeyError as e:
   st.write("Key errored")
-  st.code(e, launguage=text)
+  st.write(e)

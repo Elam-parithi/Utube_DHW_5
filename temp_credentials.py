@@ -18,7 +18,7 @@ try:
   api_key = st.secrets["api_key"]
   database_uri = st.secrets["database_uri"]
   mongo_uri = st.secrets["mongo_uri"]
-except keyError as e:
+except KeyError as e:
   if not api_key:
     api_key=None
   if not database_uri:

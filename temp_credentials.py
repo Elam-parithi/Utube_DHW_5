@@ -1,6 +1,5 @@
 # Your Credentials your responsibility.
 
-
 import streamlit as st
 
 """
@@ -19,13 +18,5 @@ try:
   database_uri = st.secrets["database_uri"]
   mongo_uri = st.secrets["mongo_uri"]
 except KeyError as e:
-  if not api_key:
-    api_key=None
-  if not database_uri:
-    database_uri=None
-  if not mongo_uri:
-    mongo_uri=None
   st.write("Key errored")
   st.code(e, launguage=text)
-
-

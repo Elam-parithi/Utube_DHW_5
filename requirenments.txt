@@ -6,4 +6,8 @@ streamlit
 streamlit-tags
 st-annotated-text
 streamlit-option-menu
+
 google-api-python-client
+google-auth
+google-auth-httplib2
+google-auth-oauthlib

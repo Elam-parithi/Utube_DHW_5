@@ -14,7 +14,18 @@ But your can add it at the time of execution in UI.
 # database_url = 'sqlite:///my_database.db'  # SQLite
 # database_url = 'mysql+pymysql://user:password@host/dbname'
 # sqlite:///Database_storage/Utube_DHW-5.db
+try:
+  api_key = st.secrets["api_key"]
+  database_uri = st.secrets["database_uri"]
+  mongo_uri = st.secrets["mongo_uri"]
+except keyError as e:
+  if not api_key:
+    api_key=None
+  if not database_uri:
+    database_uri=None
+  if not mongo_uri:
+    mongo_uri=None
+  st.write("Key errored")
+  st.code(e, launguage=text)
 
-api_key = st.secrets["api_key"]
-database_uri = st.secrets["database_uri"]
-mongo_uri = st.secrets["mongo_uri"]
+

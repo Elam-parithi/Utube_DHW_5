@@ -1,0 +1,9 @@
+pip install nltk
+pip install pymongo
+pip install sqlalchemy
+
+pip install streamlit
+pip install streamlit-tags
+pip install st-annotated-text
+pip install streamlit-option-menu
+pip install google-api-python-client

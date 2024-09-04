@@ -1,6 +1,5 @@
 # Your Credentials your responsibility.
 
-
 import streamlit as st
 
 """
@@ -14,7 +13,10 @@ But your can add it at the time of execution in UI.
 # database_url = 'sqlite:///my_database.db'  # SQLite
 # database_url = 'mysql+pymysql://user:password@host/dbname'
 # sqlite:///Database_storage/Utube_DHW-5.db
-
-api_key = st.secrets["api_key"]
-database_uri = st.secrets["database_uri"]
-mongo_uri = st.secrets["mongo_uri"]
+try:
+  api_key = st.secrets["api_key"]
+  database_uri = st.secrets["database_uri"]
+  mongo_uri = st.secrets["mongo_uri"]
+except KeyError as e:
+  st.write("Key errored")
+  st.write(e)

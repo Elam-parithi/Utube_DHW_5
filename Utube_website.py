@@ -28,7 +28,7 @@ annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-
 st.divider()
 selected_option = option_menu('', ["config", "home", "storage", "analysis", "plot", "about"],
                               icons=['gear', 'house', "database", "list-task", 'bi-bar-chart', 'info-square'],
-                              default_index=1, menu_icon="cast", orientation="horizontal")  # orientation="horizontal"
+                              default_index=0, menu_icon="cast", orientation="horizontal")  # orientation="horizontal"
 
 if selected_option == "config":
     config_page()

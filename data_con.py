@@ -1,48 +1,72 @@
 # data_con.py
+
 # this module is to connect with SQL server and upload data.
 
-import re
+import os
 import json
 import pandas as pd
-from datetime import datetime
+from pymongo import MongoClient
 from sqlalchemy import create_engine
 from sqlalchemy.exc import SQLAlchemyError
 
 
-def check_database_availability(mysql_uri):
-    try:
-        engine = create_engine(mysql_uri)
-        connection = engine.connect()
-        connection.close()
-        print(f"Successfully connected to the database URI.")
-        return True
-    except SQLAlchemyError as e:
-        print(f"Error: {e}")
-        return False
+class sql_tube:
+    def __init__(self, url=None):
+        self.connection_str = url
+        self.connection = None
+        try:
+            """
+            Creates and returns a SQLAlchemy engine based on the database type and configuration.
+            local DB: sqlite:///Database_storage/Utube_DHW-5.db
+            MySQL: mysql+pymysql://username:password@host:port/dbname
+            """
+            engine = create_engine(self.connection_str)
+            self.connection = engine.connect()
+        except SQLAlchemyError as e:
+            print(f"Error: {e}")
+
+    def sql_write(self, table_name, data):
+        # Uploads data to the specified table in the SQL database.
+        with self.connection as connection:
+            data.to_sql(table_name, con=connection, if_exists='append', index=False)
+            print(f"Data uploaded to table {table_name}.")
+
+    def json_2_sql(self, table_name, json_filepath):
+        if not os.path.isfile(json_filepath):
+            print("File not found!")
+            return
+        with open(json_filepath, 'r') as file:
+            data = json.load(file)
+        df = pd.DataFrame(data)
+        engine = create_engine(self.connection_str)
+        df.to_sql(table_name, con=engine, if_exists='append', index=False)
+        print(f"SQL upload successfully")
+        return table_name
+
+    def sql_read(self, query):
+        # Reads data from SQL database using the provided query.
+        try:
+            with self.connection as connection:
+                result = pd.read_sql(query, con=connection)
+                return result
+        except SQLAlchemyError as e:
+            print(f"Error reading data: {e}")
+            return pd.DataFrame()
+
+    def close_sql(self):
+        # closing connection
+        self.connection.close()
 
 
-def convert_iso_to_mysql_datetime(iso_datetime_str):
-    date_obj = datetime.strptime(iso_datetime_str, '%Y-%m-%dT%H:%M:%SZ')
-    mysql_datetime_str = date_obj.strftime('%Y-%m-%d %H:%M:%S')
-    return mysql_datetime_str
+class mongo_tube:
+    def __init__(self, uri=None):
+        self.mongo_uri = uri
+        self.client = None
+        try:
+            self.client = MongoClient(self.mongo_uri)
+            self.client.server_info()
+        except Exception as e:
+            print(f"Failed to connect to MongoDB: {e}")
 
-
-def convert_iso_duration_to_seconds(iso_duration_str):
-    pattern = re.compile(r'PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?')
-    match = pattern.match(iso_duration_str)
-    if not match:
-        raise ValueError("Invalid ISO 8601 duration format")
-    hours = int(match.group(1)) if match.group(1) else 0
-    minutes = int(match.group(2)) if match.group(2) else 0
-    seconds = int(match.group(3)) if match.group(3) else 0
-    total_seconds = hours * 3600 + minutes * 60 + seconds
-    return total_seconds
-
-
-def upload_json(table_name, json_data, database_url):
-    data = json.loads(json_data)
-    df = pd.DataFrame(data)
-    engine = create_engine(database_url)
-    df.to_sql(table_name, con=engine, if_exists='append', index=False)
-    return True
-
+    def close_mongo(self):
+        self.client.close()

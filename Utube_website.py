@@ -20,11 +20,10 @@ st.set_page_config(
     layout='wide',
 )
 
-
 # Streamlit page title and author annotation
 st.title("YouTube Data Harvesting and Warehousing")
 annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)',
-                       'Data Scientist', "#8ef"))
+                       'Data Scientist  |  System Administrator', "#8ef"))
 st.divider()
 selected_option = option_menu('', ["config", "home", "storage", "analysis", "plot", "about"],
                               icons=['gear', 'house', "database", "list-task", 'bi-bar-chart', 'info-square'],
@@ -32,6 +31,7 @@ selected_option = option_menu('', ["config", "home", "storage", "analysis", "plo
 
 if selected_option == "config":
     config_page()
+
 
 elif selected_option == "home":
     home_page()

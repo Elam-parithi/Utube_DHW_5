@@ -2,9 +2,26 @@
 # page one of the application not default page. but API_key verification is done here and SQL configuration done here.
 
 
-import data_con as my_sql
-from pymongo import MongoClient
-from utube_DHW_aux_modules import *
+from data_con import *
+import streamlit as st
+from youtube_extractor import check_api_key
+from utube_DHW_aux_modules import key_hide
+
+
+def success_banner(session_key, session_state_key, status: bool, op_string: str):
+    if status is bool:
+        st.session_state[session_state_key] = status
+    else:
+        raise AttributeError
+    with st.empty():
+        state_key = st.session_state[session_state_key]
+        hidden_key = key_hide(st.session_state[session_key])
+        if state_key:
+            st.success(f"{op_string} passed. \n{hidden_key}", icon="✔️")
+        elif not state_key:
+            st.error(f"Invalid {op_string} !!! \n{hidden_key}", icon="❌")
+        else:
+            st.info(f"Just loaded the page configure the {op_string} !!!", icon=":gear")
 
 
 def config_page():
@@ -14,19 +31,8 @@ def config_page():
         api_key = st.text_input("API key:", type="password", key="api_key",
                                 value=st.session_state["api_key"])
         if st.form_submit_button(label='Verify'):
-            if yt.check_api_key(api_key, method=0):
-                st.session_state["API_key_pass"] = True
-            else:
-                st.session_state["API_key_pass"] = False
-    with st.empty():
-        if st.session_state["API_key_pass"]:
-            hidden_key = key_hide(st.session_state["api_key"])
-            st.success(f"API key passed. \n{hidden_key}", icon="✔️")
-        elif not st.session_state["API_key_pass"]:
-            hidden_key = key_hide(st.session_state["api_key"])
-            st.error(f"Invalid API key !!! \n{hidden_key}", icon="❌")
-        else:
-            st.info("Just loaded the page configure the API key !!!", icon=":gear")
+            check_status = check_api_key(api_key, method=0)
+    success_banner("api_key","API_key_pass", check_status,"API key")
 
     st.divider()
     with st.container():
@@ -44,10 +50,11 @@ def config_page():
                                     value=st.session_state['mysql_config'])
             if st.button(label='Verify', key='sql-verify'):
                 st.write("Verifying>>>>")
-                mysql_status_check = my_sql.check_database_availability(sql_url)
-                if mysql_status_check:
+                sql_db = sql_tube(sql_url)
+                if sql_db:
                     st.session_state['mysql_config'] = sql_url
                     st.success('Successfully connected to the database URI.')
+                    sql_db.close_sql()
                 else:
                     st.error("SQL credentials failed.")
         with tab2:
@@ -61,10 +68,10 @@ def config_page():
                                       value=st.session_state['mongo_config'])
             if st.button(label='Verify', key='mongo-verify'):
                 st.write("Verifying>>>>")
-                try:
-                    client = MongoClient(mongo_uri)
-                    client.server_info()
+                mongo_connection = mongo_tube(mongo_uri)
+                if mongo_connection:
                     st.session_state['mongo_config'] = mongo_uri
                     st.success("Connected to MongoDB!")
-                except Exception as e:
-                    st.error(f"Failed to connect to MongoDB: {e}")
+                    mongo_connection.close_mongo()
+                else:
+                    st.error(f"Failed to connect to MongoDB.")

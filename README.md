@@ -59,4 +59,4 @@ OR directly run the application file `Utube_website.py`:
 ## Contact
 Feel free to reach out via [LinkedIn](https://www.linkedin.com/in/elamparithi-t/).
 ---
-Developed by ![Elamparithi](https://www.linkedin.com/in/elamparithi-t/)
+Developed by ![LinkedIn](https://img.shields.io/badge/-LinkedIn-blue?logo=linkedin&style=social)(https://www.linkedin.com/in/elamparithi-t/)

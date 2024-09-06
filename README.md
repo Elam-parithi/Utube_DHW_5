@@ -1,5 +1,7 @@
 # YouTube Data Harvesting and Warehousing
-![LinkedIn](https://img.shields.io/badge/-LinkedIn-blue?logo=linkedin&style=social)(https://www.linkedin.com/in/elamparithi-t/)
+
+<a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-Logo.png" alt="linkedin.com" width="100" height="40"></a>
+
 ## Overview
 This project focuses on harvesting data from YouTube and warehousing it using SQL, with a frontend interface built using Streamlit. It allows users to efficiently collect, store, and analyze YouTube data.
 ## Tech used
@@ -57,6 +59,9 @@ OR directly run the application file `Utube_website.py`:
    streamlit run Utube_website.py
    ```
 ## Contact
-Feel free to reach out via [LinkedIn](https://www.linkedin.com/in/elamparithi-t/).
+Feel free to reach out via 
+
+<a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-In-Bug.png" alt="linkedin.com" width="42" height="42"></a>
+
 ---
-Developed by ![Elamparithi](https://www.linkedin.com/in/elamparithi-t/)
+Developed by [Elamparithi](https://www.linkedin.com/in/elamparithi-t/)

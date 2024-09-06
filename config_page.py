@@ -3,7 +3,7 @@
 
 import streamlit as st
 from data_con import sql_tube, mongo_tube
-from utube_DHW_aux_modules import key_hide
+from config_and_auxiliary import key_hide
 from youtube_extractor import check_api_key
 
 

@@ -1,7 +1,8 @@
 # home_page.py
 
 # this is the default landing page for my application.
-# This python code contains a function called home_page() which is called in Utube_website.py
+# This python code contains a function called home_page()
+# which is called in extractor_app.py
 
 
 import os
@@ -9,7 +10,7 @@ import json
 import streamlit as st
 from datetime import datetime
 from streamlit_tags import st_tags
-from utube_DHW_aux_modules import yt, key_hide
+from config_and_auxiliary import yt, key_hide
 
 directory_path = r"extracted_data"
 
@@ -45,7 +46,7 @@ def home_page():
             label="Channel ID/names (programmed-limit 10):",
             maxtags=10,
             key="keywords",
-            value=['guvi', 'UCgLnPO7GYxq47FzF5j3TSlA']
+            value=st.secrets.settings.defalt_channel
         )
         if st.form_submit_button("Proceed"):
             chid_list = []
@@ -81,5 +82,5 @@ def home_page():
                     except Exception as e:
                         st.error(f"Error extracting data for channel ID {item}: {e}")
 
-    #st.session_state.file_lists = file_list
+    # st.session_state.file_lists = file_list
     st.write("Files:", file_list)

@@ -1,4 +1,4 @@
-# SQL_Analysis.py
+# sql_analysis.py
 """
 This is for Querying the SQL table and getting the output.
 """

@@ -1,5 +1,5 @@
 # Security Policy
-
+***Your Credentials your responsibility***
 ## User caution
 
 You are coming with our own credential to use this application. So, your security is at your risk. kindly note the following details:
@@ -11,6 +11,7 @@ You are coming with our own credential to use this application. So, your securit
 
 ## Must follow
 
+- Create secrets.toml for keeping secrets.
 - If your SQL is paid keep in note to shut down that. If not it will lead to charges form the cloud provider.
 - After completing using the API key, disable the Google API key in the console.
 - In case of taking screen recording or any form of documentation. keep in mind not to expose the credentials. This application has session state onboard.

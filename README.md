@@ -62,9 +62,7 @@ OR directly run the application file `Utube_website.py`:
 ## Contact
 Feel free to reach out via 
 
-<a href="https://www.linkedin.com/in/elamparithi-t">
 <img src="Icons/LI-In-Bug.png" alt="linkedin.com" width="42" height="38"></a>
-
 <a href="https://github.com/Elam-parithi">
 <img src="Icons/github-mark-white.png" alt="linkedin.com" width="42" height="38"></a>
 

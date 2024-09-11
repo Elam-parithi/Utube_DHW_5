@@ -1,6 +1,6 @@
 # YouTube Data Harvesting and Warehousing
 
-<a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-Logo.png" alt="linkedin.com" width="100" height="40"></a>
+<a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-Logo.png" alt="linkedin.com" width="100" height="35"></a>
 
 ## Overview
 This project focuses on harvesting data from YouTube and warehousing it using SQL, with a frontend interface built using Streamlit. It allows users to efficiently collect, store, and analyze YouTube data.
@@ -8,7 +8,7 @@ This project focuses on harvesting data from YouTube and warehousing it using SQ
 - MySQL 
 - Streamlit
 - Google YouTube API
-- NLTK (Natural Language Toolkit)
+- NLTK (Natural Language ToolKit)
 - pandas
 - matplotlib and Seaborn
 - HTML and CSS
@@ -17,13 +17,14 @@ This project focuses on harvesting data from YouTube and warehousing it using SQ
 - Harvest YouTube data using the YouTube API
 - Store data in an SQL database
 - Interactive dashboards and data visualization using Streamlit
-- comment `sentiment analysis` on the same page. 
+- comment `sentiment analysis` on the plots page. 
 ## Getting Started
 ### Prerequisites
-- Make sure you have Python installed on your system. You can download it from [python.org](https://www.python.org/).
+- Make sure you have `Python 3.12.0` installed on your system. You can download it from [python.org](https://www.python.org/).
 - Create a project and obtain YouTube Data API v3 API key from [Google Developers Console](https://console.developers.google.com/)
-- you also need Access credentials to SQL DB. anything similar to MySQL would be better.
-- And little knowledge on how to use those tech mentioned above.
+- you also need Access credentials to SQL DB. Anything similar to MySQL would be better.
+- MongoDB URI is optional. There is option to go for it. 
+- And little knowledge on how to use those tech mentioned above. 
 ### Setup
 1. Clone the repository:
     ```bash
@@ -61,7 +62,11 @@ OR directly run the application file `Utube_website.py`:
 ## Contact
 Feel free to reach out via 
 
-<a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-In-Bug.png" alt="linkedin.com" width="42" height="42"></a>
+<a href="https://www.linkedin.com/in/elamparithi-t">
+<img src="Icons/LI-In-Bug.png" alt="linkedin.com" width="42" height="38"></a>
+
+<a href="https://github.com/Elam-parithi">
+<img src="Icons/github-mark-white.png" alt="linkedin.com" width="42" height="38"></a>
 
 ---
 Developed by [Elamparithi](https://www.linkedin.com/in/elamparithi-t/)

@@ -1,31 +1,38 @@
 # config_page.py
-# page one of the application not default page. but API_key verification is done here and SQL configuration done here.
-
+"""
+page one of the application not default page.
+But, API_key verification is done here and SQL configuration done here.
+# key="api-key" is not working
+"""
 import streamlit as st
 from data_con import sql_tube, mongo_tube
 from config_and_auxiliary import key_hide
-from youtube_extractor import check_api_key
+import youtube_extractor as yt
 
 
-def status_banner(session_key, session_state_key, op_string: str):
-    with st.empty():
-        state_key = st.session_state[session_state_key]
-        hidden_key = key_hide(st.session_state[session_key])
-        if state_key == True:
-            st.success(f"{op_string} passed. \n{hidden_key}", icon="✔️")
-        elif state_key == False:
-            st.error(f"Invalid {op_string} !!! \n{hidden_key}", icon="❌")
-        elif state_key == None:
-            st.info(f"Just loaded the page configure the {op_string} !!!", icon="⚙️")
-        else:
-            raise AttributeError("value should be bool or none")
+def status_banner(value_key, constructor):
+    try:
+        state_key = st.session_state[constructor].is_connected
+        hidden_key = key_hide(st.session_state[value_key], 9)
+        if state_key is True:
+            st.success(f"{constructor} passed. \n{hidden_key}", icon="✔️")
+        elif state_key is False:
+            st.error(f"Invalid {constructor} !!! \n{hidden_key}", icon="❌")
+        elif state_key is None:
+            st.info(f"Just loaded the page configure the {constructor} !!!", icon="⚙️")
+    except AttributeError:
+        # print('status_banner error')
+        pass
 
 
-def colour_pick(session_status_key):
-    colour_status = st.session_state[session_status_key]
+def colour_pick(constructor):
     no_state = "orange"
     valid_state = "lightgreen"
-    invalid_state = "rgb(253, 109, 109)"
+    invalid_state = "red"  # "rgb(253, 109, 109)"
+    try:
+        colour_status = st.session_state[constructor].is_connected
+    except AttributeError:
+        return no_state
     if colour_status is True:
         output_colour = valid_state
     elif colour_status is False:
@@ -35,78 +42,73 @@ def colour_pick(session_status_key):
     return output_colour
 
 
+def status_update():
+    api_color = colour_pick("youTube_API")
+    sql_color = colour_pick("MySQL_URL")
+    mdb_color = colour_pick("MongoDB_URI")
+    repeated = " width: 250px; height: 40px; display: flex; justify-content: center; align-items: center; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-size: 18px; text-align: center;"
+    html_code = f"""
+        <div id="status-container" style="display: flex; gap: 20px; border:50px; align-items: center; justify-content: center; border-radius: 8px; box-shadow: 0 4px 8px lightblue;
+        background-color: rgba(215, 218, 231, 0.918);">
+            <div><h3 style="color: black;"> Status: </h3></div> 
+            <div style="background-color: {api_color}; {repeated}"><h4>API Key</h4></div>
+            <div style="background-color: {sql_color}; {repeated}"><h4>SQL URL</h4></div>
+            <div style="background-color: {mdb_color}; {repeated}"><h4>Mongo URI</h4></div>
+        </div>
+        """
+    st.html(html_code)
+
+
+def repeater_entry(paragraphs, value_key, constructor: str):
+    # "youTube_API", "MySQL_URL", "MongoDB_URI"
+    st.text(paragraphs)
+    init_value = ""
+    try:
+        init_value = st.session_state[value_key]
+    except KeyError:
+        print("SessionState key error ", value_key)
+    entry_val = st.text_input(label=constructor, type="password",
+                              value=init_value)
+    if st.button("connect", key=f"{constructor}_button"):
+        st.session_state[value_key] = entry_val
+        with st.spinner(text="Verifying>>>>"):
+            if constructor == "youTube_API":
+                st.session_state[constructor] = yt.YouTubeDataExtractor(st.session_state[value_key])
+            elif constructor == "MySQL_URL":
+                st.session_state[constructor] = sql_tube(st.session_state[value_key])
+            elif constructor == "MongoDB_URI":
+                st.session_state[constructor] = mongo_tube(st.session_state[value_key])
+            else:
+                raise ValueError("Invalid constructor, only (youTube_API, MySQL_URL, MongoDB_URI)")
+    return None
+
+
 def config_page():
     st.subheader("⚙️ Configuration")
 
     tab1, tab2, tab3 = st.tabs(['👩🏻‍💻 YouTube API key', '🛢️ SQL URL', '🗃️ MongoDB URI'])
     with tab1:
-        st.write("**YouTube API key:**")
         paragraphs = """
-                You need a Google API key to use this application. Go get yours bellow is 
-                just a default key on streamlit secrets. Follow below for more info.
-                https://developers.google.com/youtube/v3/getting-started
+                You need a Google API key to use this application. Go get yours bellow is just a default key on streamlit secrets. 
+                Follow below for more info.      🔗https://developers.google.com/youtube/v3/getting-started
                 """
-        st.code(paragraphs, language='text')
-        api_key = st.text_input("API key:", type="password", key="api_key",
-                                value=st.session_state["api_key"])
-        st.write("")
-        st.write("")
-        st.write("")
-        if st.button(label='Verify'):
-            st.session_state["API_key_pass"] = check_api_key(api_key, method=0)
-        status_banner(session_key="api_key", session_state_key="API_key_pass", op_string="API key")
+        repeater_entry(paragraphs, value_key="api_key", constructor="youTube_API")
+        status_banner(value_key="api_key", constructor="youTube_API")
 
     with tab2:
-        st.write("**SQL server URL:**")
         paragraphs = """
         I'm going to request only SQL server URL, because it will select between local and external DB.
-        And no need for multiple user input.
+        And no need for multiple user input. Be secure, ⚠️Your URL might contain password.
         i.e: for local DB: sqlite:///Database_storage/Utube_DHW-5.db
         for external  SQL: mysql+pymysql://username:password@host:port/dbname
         """
-        st.code(paragraphs, language='text')
-        sql_url = st.text_input("Database_URL", key="url",
-                                value=st.session_state['mysql_config'])
-        if st.button(label='Verify', key='sql-verify'):
-            st.write("Verifying>>>>")
-            sql_db = sql_tube(sql_url)
-            if sql_db:
-                st.session_state['mysql_config'] = sql_url
-                st.session_state["sql_state"] = True
-                sql_db.close_sql()
-        status_banner(session_key="mysql_config", session_state_key="sql_state", op_string="SQL URI")
+        repeater_entry(paragraphs, value_key='mysql_config', constructor="MySQL_URL")
+        status_banner(value_key='mysql_config', constructor="MySQL_URL")
 
     with tab3:
-        st.write("**MongoDB server URI**")
         paragraphs = """
-        Enter MongoDB server details in following format or just copy paste the URI.
+        Enter MongoDB server details in following format or just copy paste the URI. Be secure, ⚠️Your URI might contain password.
         i.e: mongodb://username:password@host:port/dbname
         """
-        st.code(paragraphs, language='text')
-        mongo_uri = st.text_input("MongoDB URI:", key="mongo-url",
-                                  value=st.session_state['mongo_config'])
-        if st.button(label='Verify', key='mongo-verify'):
-            st.write("Verifying>>>>")
-            mongo_connection = mongo_tube(mongo_uri)
-            if mongo_connection:
-                st.session_state['mongo_config'] = mongo_uri
-                st.session_state["mongo_state"] = True
-                mongo_connection.close_mongo()
-        status_banner('mongo_config', "mongo_state", "MongoDB URI")
-    st.empty()
-    st.divider()
-    api_colour = colour_pick("API_key_pass")
-    sql_colour = colour_pick("sql_state")
-    mon_colour = colour_pick("mongo_state")
-    repeated = "width: 350px; height: 50px; color: #000; display: flex; justify-content: center; align-items: center; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); font-size: 18px; text-align: center;"
-    html_code = f"""
-    <h1 style="colour"> Activation Status: </h1>
-    <body style="display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f4;">
-    <div style="display: flex; gap: 20px;">
-        <div style="background-color: {api_colour}; {repeated}"><h2>API Key</h2></div>
-        <div style="background-color: {sql_colour}; {repeated}"><h2>SQL URL</h2></div>
-        <div style="background-color: {mon_colour}; {repeated}"><h2>Mongo URI</h2></div>
-    </div>
-    </body>
-    """
-    st.html(html_code)
+        repeater_entry(paragraphs, value_key='mongo_config', constructor="MongoDB_URI")
+        status_banner(value_key='mongo_config', constructor="MongoDB_URI")

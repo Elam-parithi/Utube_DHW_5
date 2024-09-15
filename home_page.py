@@ -10,7 +10,8 @@ import json
 import streamlit as st
 from datetime import datetime
 from streamlit_tags import st_tags
-from config_and_auxiliary import yt, key_hide
+from googleapiclient.errors import HttpError
+from config_and_auxiliary import yt, key_hide, MAX_CHANNELS, d_channel, custom_annotation
 
 directory_path = r"extracted_data"
 
@@ -23,30 +24,35 @@ def save_dict_to_json(channel_data_e, item):
     return file_path
 
 
+@st.dialog("Youtube API Quota Exceeded.", width="large")
+def quota_popup():
+    dialog_text = """
+    Your YouTube API quota has been exceeded. Please check your quota usage and try again later. OR use Another key.
+    For more info.</p> <a href="https://console.developers.google.com/">Google Developers Console</a>
+    """
+    st.write(dialog_text)
+    text_input = st.text_input("Enter another API if available.")
+    c1, c2, c3 = st.columns(3)
+    with c3:
+        if st.button("Submit"):
+            st.session_state.api_key = text_input
+            st.rerun()
+    with c1:
+        if st.button("exit"):
+            st.rerun()
+
+
 def home_page():
     """
     This is the Home page where you enter channel name/ID and get details.
     """
-    # Check if the API key is valid
-    if st.session_state.get("API_key_pass") is None:
-        st.info("Just loaded the page, set the API key in ⚙️ Configuration page.")
-    elif st.session_state.get("API_key_pass"):
-        api_key = key_hide(st.session_state["api_key"])
-        st.success(f'✔️ API key is valid. {api_key}')
-    elif not st.session_state.get("API_key_pass"):
-        api_key = key_hide(st.session_state["api_key"])
-        st.error(f'❌ API key is invalid. {api_key}')
-    else:
-        st.error("Session state API key error.")
-
     st.subheader("Home")
-    file_list = []
     with st.form(key="ChannelID_names", clear_on_submit=False):
         keywords = st_tags(
-            label="Channel ID/names (programmed-limit 10):",
-            maxtags=10,
+            label="Youtube channel ID/names (max 10):",
+            maxtags=MAX_CHANNELS,
             key="keywords",
-            value=st.secrets.settings.defalt_channel
+            value=d_channel
         )
         if st.form_submit_button("Proceed"):
             chid_list = []
@@ -58,19 +64,21 @@ def home_page():
                     try:
                         channel_id = utube_generator.get_channel_id(item)
                     except AttributeError as e:
-                        st.error(f"Error converting channel name to ID: {e}")
+                        quota_popup()
+                        # st.error(f"Error converting channel name to ID: {e}")
                         continue
                 else:
                     channel_id = item
                 chid_list.append(channel_id)
 
-            st.write('All channel ID: ', chid_list)
+            st.write('All channel ID: ')
+            custom_annotation(chid_list)
             file_list = []
 
             for item in chid_list:
                 with st.status(f"Extracting data from channel ID: {item}", expanded=True) as extraction_status:
                     try:
-                        channel_data_e = utube_generator.guvi_format(item)  # channel_data_e is a JSON dict.
+                        channel_data_e = utube_generator.guvi_format(item)  # stocks_data is a JSON dict.
                         st.write("Channel data was extracted and stored as Dictionary.")
                         first_key = next(iter(channel_data_e))
                         channel_name_filename = channel_data_e[first_key]["Channel_Name"]
@@ -79,8 +87,12 @@ def home_page():
                         file_list.append(filename)
                         st.write(f"Data saved to '{filename}'.")
                         extraction_status.update(label="Extraction completed.", state="complete", expanded=False)
-                    except Exception as e:
-                        st.error(f"Error extracting data for channel ID {item}: {e}")
+                    except HttpError as e:
+                        if e.resp.status == 403:
+                            quota_popup()
+                        else:
+                            st.error(f"An error occurred: e.resp.status==>>{e.resp.status}")
+                            st.error(f"Error extracting data for channel ID {item}: {e}")
 
-    # st.session_state.file_lists = file_list
-    st.write("Files:", file_list)
+            # st.session_state.file_lists = file_list
+            st.write("Files:", custom_annotation(file_list))

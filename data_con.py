@@ -14,22 +14,20 @@ class sql_tube:
     def __init__(self, url=None):
         self.connection_str = url
         self.connection = None
+        self.is_connected = None
+        """
+        Creates and returns a SQLAlchemy engine based on the database type and configuration.
+        local DB: sqlite:///Database_storage/Utube_DHW-5.db
+        MySQL: mysql+pymysql://username:password@host:port/dbname
+        """
         try:
-            """
-            Creates and returns a SQLAlchemy engine based on the database type and configuration.
-            local DB: sqlite:///Database_storage/Utube_DHW-5.db
-            MySQL: mysql+pymysql://username:password@host:port/dbname
-            """
             engine = create_engine(self.connection_str)
             self.connection = engine.connect()
+            self.is_connected = True
+            # print("sql_tube connected")
         except SQLAlchemyError as e:
+            self.is_connected = False
             print(f"Error: {e}")
-
-    def sql_write(self, table_name, data):
-        # Uploads data to the specified table in the SQL database.
-        with self.connection as connection:
-            data.to_sql(table_name, con=connection, if_exists='append', index=False)
-            print(f"Data uploaded to table {table_name}.")
 
     def json_2_sql(self, table_name, json_filepath):
         if not os.path.isfile(json_filepath):
@@ -38,8 +36,7 @@ class sql_tube:
         with open(json_filepath, 'r') as file:
             data = json.load(file)
         df = pd.DataFrame(data)
-        engine = create_engine(self.connection_str)
-        df.to_sql(table_name, con=engine, if_exists='append', index=False)
+        df.to_sql(table_name, con=self.connection, if_exists='append', index=False)
         print(f"SQL upload successfully")
         return table_name
 
@@ -55,17 +52,22 @@ class sql_tube:
 
     def close_sql(self):
         # closing connection
-        self.connection.close()
+        if self.connection is not None:
+            self.connection.close()
 
 
 class mongo_tube:
     def __init__(self, uri=None):
         self.mongo_uri = uri
         self.client = None
+        self.is_connected = None
         try:
             self.client = MongoClient(self.mongo_uri)
             self.client.server_info()
+            self.is_connected = True
+            # print("mongo_tube connected")
         except Exception as e:
+            self.is_connected = False
             print(f"Failed to connect to MongoDB: {e}")
 
     def close_mongo(self):

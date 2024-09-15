@@ -9,39 +9,32 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 
-def check_api_key(function_api_key, method=0):
-    if method == 0:
-        try:    # Using youtube api
-            youtube = build('youtube', 'v3', developerKey=function_api_key)
-            request = youtube.channels().list(part='snippet', id='Ks-_Mh1QhMc')
-            request.execute()
+def check_api_key(function_api_key):
+    try:
+        url = f"https://www.googleapis.com/youtube/v3/channels?part=id&mine=true&key={function_api_key}"
+        response = requests.get(url)
+        if response.status_code == 200:
             return True
-        except HttpError as e:
-            print(f"API key validation failed. Error: {e}")
+        else:
             return False
-    elif method == 1:   # using requests
-        try:
-            url = f"https://www.googleapis.com/youtube/v3/channels?part=id&mine=true&key={function_api_key}"
-            response = requests.get(url)
-            if response.status_code == 200:
-                return True
-            else:
-                return False
-        except HttpError as e:
-            raise ConnectionError(e)
-    else:
-        print("invalid method, failed.")
-        return False
+    except HttpError as e:
+        raise ConnectionError(e)
 
 
 class YouTubeDataExtractor:
     def __init__(self, youtube_api_key):
         self.channel_id_pattern = compile(r'^UC[a-zA-Z0-9-_]{22}$')
-        self.youtube = build('youtube', 'v3', developerKey=youtube_api_key)
+        self.youtube = None
+        self.is_connected = None
+        try:
+            self.youtube = build('youtube', 'v3', developerKey=youtube_api_key)
+            self.is_connected = True
+        except HttpError as e:
+            self.is_connected = False
+            print(f"API key validation failed. Error: {e}")
 
     def get_channel_id(self, channel_name):
-        request = self.youtube.search().list(part='snippet', q=channel_name,
-                                             type='channel', maxResults=1)
+        request = self.youtube.search().list(part='snippet', q=channel_name, type='channel', maxResults=1)
         response = request.execute()
         if response['items']:
             return response['items'][0]['snippet']['channelId']
@@ -116,8 +109,11 @@ class YouTubeDataExtractor:
                 comments.extend(response['items'])
             return comments
         except HttpError as e:
-            print(f"Error fetching comments for video {video_id}: {e}")
-            return []
+            if e.resp.status == 403 and e.error_details[0]['reason'] == 'commentsDisabled':
+                print(f"Comments are disabled for video ID: {video_id}")
+            else:
+                print(f"Error fetching comments for video {video_id}: {e}")
+                return []
 
     def guvi_format(self, channel_id):
         channel_infos = self.get_channel_info(channel_id)

@@ -1,10 +1,11 @@
 # Your Credentials your responsibility.
-
 import json
 import random
 import string
 import streamlit as st
+from pathlib import Path
 import youtube_extractor as yt
+from annotated_text import annotated_text
 
 """
 This code contains default api keys should not be disclosed. protected using secret.
@@ -46,6 +47,27 @@ light_colors = [
 # sqlite:///Database_storage/Utube_DHW-5.db  # SQLite
 
 
+def pick_random_color(unused_colors):
+    if len(unused_colors) == 0:
+        unused_colors = light_colors.copy()
+    random_number = random.randrange(0, len(unused_colors))
+    remaining = unused_colors.pop(random_number)
+    return remaining
+
+
+def custom_annotation(t_list):
+    my_list = []
+    colors = []
+    for count, item in enumerate(t_list):
+        if count != (len(t_list)-1):
+            e_str = " , "
+        else:
+            e_str = " "
+        f_str = list(("  ", (item, '', pick_random_color(colors)), e_str)) # str(count+1)
+        my_list.append(f_str)
+    annotated_text(my_list)
+
+
 def generate_api_key(length=24):
     """
     Generate a YouTube-like API key.
@@ -56,7 +78,7 @@ def generate_api_key(length=24):
     Returns:
         str: A randomly generated API key.
     """
-    characters = string.ascii_letters + string.digits + '-_'  # Alphanumeric + dash and underscore
+    characters = string.ascii_letters + string.digits
     api_key = ''.join(random.choices(characters, k=length))
     return api_key
 
@@ -92,9 +114,25 @@ def key_hide(secret_text, visible_chr=5):
     return hidden_key
 
 
-API_key = st.secrets["api_key"]
-database_URI = st.secrets["database_uri"]
-MongoDB_URI = st.secrets["mongo_uri"]
+def get_secret(Key_name):
+    secret_val = None
+    try:
+        secret_val = st.secrets[Key_name]
+    except KeyError:
+        st.info(f".streamlit/secrets.toml is missing {Key_name}")
+    finally:
+        return secret_val
+
+
+try:
+    d_channel = st.secrets["default_settings"]["default_channel"]
+except KeyError:
+    st.info(f".streamlit/secrets.toml is missing default channel list")
+    d_channel = ['UCY0zAYs-eOP7rguMWkJ6L-g', 'guvi']  # Madras foodie channel id and GUVI channel name.
+
+API_key = get_secret("api_key")
+database_URI = get_secret("database_uri")
+MongoDB_URI = get_secret("mongo_uri")
 
 if not API_key:
     API_key = generate_api_key()
@@ -103,19 +141,35 @@ if not database_URI:
 
 # Streamlit session state initialization
 configurations = {
+    "first_run": True,
     "api_key":API_key,
     "mysql_config":database_URI,
     "mongo_config":MongoDB_URI,
-    "API_key_pass":None,
-    "sql_state":None,
-    "mongo_state":None,
-    "file_lists":None
+
+    "youTube_API":None,
+    "MySQL_URL":None,
+    "MongoDB_URI":None,
+
+    "file_lists":None,
+    "json_result":None,
+    "Selected_files": None,
 }
 
 for key, value in configurations.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
-# Instantiate YouTubeDataExtractor if API key is available
-if st.session_state["API_key_pass"]:
-    tube = yt.YouTubeDataExtractor(API_key)
+
+folder_path =[ r'./extracted_data',
+               r'./logs',
+               r'./Database_storage' ]
+
+for folder_name_str in folder_path:
+    folder_name=Path(folder_name_str)
+    if not folder_name.exists():
+        folder_name.mkdir(parents=True, exist_ok=True)
+        print(f"Folder '{folder_name}' created successfully.")
+    else:
+        # print(f"Folder '{folder_name}' already exists.")
+        pass
+

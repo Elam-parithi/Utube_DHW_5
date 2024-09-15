@@ -1,6 +1,8 @@
 # extractor_app.py
 
 # This is a streamlit website run this directly on command prompt using streamlit run extractor_app.py
+
+from PIL import Image
 from config_and_auxiliary import *
 from streamlit_option_menu import option_menu
 from annotated_text import annotated_text
@@ -12,12 +14,14 @@ from sql_analysis import query_sql
 from ploting_page import analyze_page
 from about_page import about_page
 
+image_path = r"Icons/sunflower.png"
+img = Image.open(image_path)
+img = img.resize((16, 16))
 
 # Streamlit page configuration
 st.set_page_config(
     page_title="Utube DHW 5",
-    page_icon=r"Icons/Calendula.ico",
-    # "random" for choosing random icons.
+    page_icon=img,  # "random" for choosing random icons.
     layout='wide'
 )
 
@@ -47,4 +51,3 @@ elif selected_option == "plot":
 
 elif selected_option == "about":
     about_page()
-

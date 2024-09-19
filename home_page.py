@@ -11,6 +11,7 @@ import streamlit as st
 from datetime import datetime
 from streamlit_tags import st_tags
 from googleapiclient.errors import HttpError
+from httplib2 import ServerNotFoundError
 from config_and_auxiliary import yt, key_hide, MAX_CHANNELS, d_channel, custom_annotation
 
 directory_path = r"extracted_data"
@@ -87,6 +88,9 @@ def home_page():
                         file_list.append(filename)
                         st.write(f"Data saved to '{filename}'.")
                         extraction_status.update(label="Extraction completed.", state="complete", expanded=False)
+                    except ServerNotFoundError:
+                        quota_popup()
+
                     except HttpError as e:
                         if e.resp.status == 403:
                             quota_popup()

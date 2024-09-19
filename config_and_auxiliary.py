@@ -8,9 +8,9 @@ import youtube_extractor as yt
 from annotated_text import annotated_text
 
 """
-This code contains default api keys should not be disclosed. protected using secret.
-added to .git ignore file. I'm using Secrets.toml file to keep secrets locally.
-for API it will generate random 24char API key, sql database default to sqlite.
+This code contains default URL, URI keys should not be disclosed. 
+protected using secrets.toml file to keep secrets locally.
+for API it will generate random 24char API key, sql database default to SQLite3.
 Mongo will be set none.
 
 use your YouTube API credentials to use this application. 
@@ -19,6 +19,12 @@ But your can add it at the time of execution in UI.
 """
 
 MAX_CHANNELS = 10
+directory_settings = {
+    'extracted json folder' : r'./extracted_data',
+    'SQLite3 database storge folder' : r'./Database_storage',
+    'Debug logs folder' : r'./logs',
+}
+
 light_colors = [
     "#cfc",  # Light Green
     "#ffb",  # Light Yellow

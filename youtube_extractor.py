@@ -31,7 +31,7 @@ class YouTubeDataExtractor:
             self.is_connected = True
         except HttpError as e:
             self.is_connected = False
-            print(f"API key validation failed. Error: {e}")
+            print(f"API key validation failed. Error:{e}")
 
     def get_channel_id(self, channel_name):
         request = self.youtube.search().list(part='snippet', q=channel_name, type='channel', maxResults=1)
@@ -72,7 +72,7 @@ class YouTubeDataExtractor:
                 request = self.youtube.playlistItems().list_next(request, response)
             return [video['contentDetails']['videoId'] for video in videos]
         except HttpError as e:
-            print(f"Error fetching videos from playlist {playlist_id}: {e}")
+            print(f"Error fetching videos from playlist {playlist_id}:{e}")
             return []
 
     def get_video_info(self, video_id):
@@ -110,9 +110,9 @@ class YouTubeDataExtractor:
             return comments
         except HttpError as e:
             if e.resp.status == 403 and e.error_details[0]['reason'] == 'commentsDisabled':
-                print(f"Comments are disabled for video ID: {video_id}")
+                print(f"Comments are disabled for video ID:{video_id}")
             else:
-                print(f"Error fetching comments for video {video_id}: {e}")
+                print(f"Error fetching comments for video {video_id}:{e}")
                 return []
 
     def guvi_format(self, channel_id):
@@ -131,56 +131,56 @@ class YouTubeDataExtractor:
                 comment_data_dict = {}
                 for cdx, comment_items in enumerate(comment_info_response, start=1):
                     comment_data = {
-                        f"Comment_Id_{cdx}":{
-                            "Comment_Id":comment_items['id'],
-                            "Comment_Text":comment_items['snippet']['topLevelComment']['snippet']['textOriginal'],
-                            "Comment_Author":comment_items['snippet']['topLevelComment']['snippet'][
+                        f"Comment_Id_{cdx}": {
+                            "Comment_Id": comment_items['id'],
+                            "Comment_Text": comment_items['snippet']['topLevelComment']['snippet']['textOriginal'],
+                            "Comment_Author": comment_items['snippet']['topLevelComment']['snippet'][
                                 'authorDisplayName'],
-                            "Comment_PublishedAt":comment_items['snippet']['topLevelComment']['snippet']['publishedAt']
+                            "Comment_PublishedAt": comment_items['snippet']['topLevelComment']['snippet']['publishedAt']
                         }
                     }
                     comment_data_dict.update(comment_data)
 
                 if vlt_info:
                     video_dict = {
-                        f"Video_Id_{video_counter + 1}":{
-                            "Video_Id":vlt_info['id'],
-                            "Video_Name":vlt_info['snippet']['title'],
-                            "Video_Description":vlt_info['snippet']['description'],
-                            "Tags":vlt_info['snippet'].get('tags', []),
-                            "PublishedAt":vlt_info['snippet']['publishedAt'],
-                            "View_Count":vlt_info['statistics'].get('viewCount', 0),
-                            "Like_Count":vlt_info['statistics'].get('likeCount', 0),
-                            "Dislike_Count":vlt_info['statistics'].get('dislikeCount', 0),
-                            "Favorite_Count":vlt_info['statistics'].get('favoriteCount', 0),
-                            "Comment_Count":vlt_info['statistics'].get('commentCount', 0),
-                            "Duration":vlt_info['contentDetails']['duration'],
-                            "Thumbnail":vlt_info['snippet']['thumbnails']['default']['url'],
-                            "Caption_Status":'Available' if vlt_info['contentDetails'][
+                        f"Video_Id_{video_counter + 1}": {
+                            "Video_Id": vlt_info['id'],
+                            "Video_Name": vlt_info['snippet']['title'],
+                            "Video_Description": vlt_info['snippet']['description'],
+                            "Tags": vlt_info['snippet'].get('tags', []),
+                            "PublishedAt": vlt_info['snippet']['publishedAt'],
+                            "View_Count": vlt_info['statistics'].get('viewCount', 0),
+                            "Like_Count": vlt_info['statistics'].get('likeCount', 0),
+                            "Dislike_Count": vlt_info['statistics'].get('dislikeCount', 0),
+                            "Favorite_Count": vlt_info['statistics'].get('favoriteCount', 0),
+                            "Comment_Count": vlt_info['statistics'].get('commentCount', 0),
+                            "Duration": vlt_info['contentDetails']['duration'],
+                            "Thumbnail": vlt_info['snippet']['thumbnails']['default']['url'],
+                            "Caption_Status": 'Available' if vlt_info['contentDetails'][
                                                                 'caption'] == 'true' else "Unavailable",
-                            "Comments":comment_data_dict
+                            "Comments": comment_data_dict
                         }
                     }
                     videos_list.append(video_dict)
 
             plt_dict = {
-                "playlist_title":item['snippet']['title'],
-                "playlist_ID":item['id'],
-                "playlist_description":item['snippet']['description'],
-                "playlist_videos":vlt,
-                "playlist_video_count":len(vlt),
-                "videos":videos_list
+                "playlist_title": item['snippet']['title'],
+                "playlist_ID": item['id'],
+                "playlist_description": item['snippet']['description'],
+                "playlist_videos": vlt,
+                "playlist_video_count": len(vlt),
+                "videos": videos_list
             }
             play_list.append(plt_dict)
         guvi_format_data: dict = {
-            channel_infos['snippet']['title']:{
-                "Channel_Name":channel_infos['snippet']['title'],
-                "Channel_Id":channel_infos['id'],
-                "Subscription_Count":channel_infos['statistics'].get('subscriberCount', 0),
-                "Channel_Views":channel_infos['statistics'].get('viewCount', 0),
-                "Channel_Description":channel_infos['snippet']['description'],
-                "Channel_Status":channel_infos['status'],
-                "playlist":play_list
+            channel_infos['snippet']['title']: {
+                "Channel_Name": channel_infos['snippet']['title'],
+                "Channel_Id": channel_infos['id'],
+                "Subscription_Count": channel_infos['statistics'].get('subscriberCount', 0),
+                "Channel_Views": channel_infos['statistics'].get('viewCount', 0),
+                "Channel_Description": channel_infos['snippet']['description'],
+                "Channel_Status": channel_infos['status'],
+                "playlist": play_list
             }
         }
         return guvi_format_data

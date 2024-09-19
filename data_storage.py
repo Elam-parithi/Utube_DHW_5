@@ -6,9 +6,9 @@ from pathlib import Path
 import streamlit as st
 from data_con import *
 from annotated_text import annotated_text
-from config_and_auxiliary import custom_annotation
+from config_and_auxiliary import custom_annotation, directory_settings
 
-directory = Path(r'./extracted_data')
+directory = Path(directory_settings['extracted json folder'])
 
 
 def zip_files(file_list, zip_filename):
@@ -33,17 +33,6 @@ def create_download_buttons(filepaths):
             data=file_data,
             file_name=filename,
             mime="application/octet-stream")
-
-
-def visible_check(status_key):
-    match_case = st.session_state[status_key]
-    if match_case:
-        op = "visible"
-    elif match_case is None:
-        op = "hidden"
-    else:
-        op = "hidden"
-    return op
 
 
 def Data_storage_tab():
@@ -85,7 +74,7 @@ def Data_storage_tab():
         if storage_sql:
             for file_name in st.session_state.Selected_files:
                 filename = path.basename(file_name)
-                st.session_state.MySQL_URL.json_2_sql(filename, file_name)
+                st.session_state["MySQL_URL"].json_2_sql(filename, file_name)
             st.write("storage_sql")
         if storage_mon:
             st.write("storage_mon")

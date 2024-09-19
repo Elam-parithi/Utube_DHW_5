@@ -13,6 +13,7 @@ from data_storage import Data_storage_tab
 from sql_analysis import query_sql
 from ploting_page import analyze_page
 from about_page import about_page
+from html_addon import statusbar
 
 image_path = r"Icons/sunflower.png"
 img = Image.open(image_path)
@@ -29,7 +30,7 @@ st.set_page_config(
 st.title("YouTube Data Harvesting and Warehousing")
 annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)',
                        'Data Scientist  |  System Administrator', "#8ef"))
-st.divider()
+statusbar()
 selected_option = option_menu('', ["config", "home", "storage", "analysis", "plot", "about"],
                               icons=['gear', 'house', "database", "list-task", 'bi-bar-chart', 'info-square'],
                               default_index=0, orientation="horizontal")

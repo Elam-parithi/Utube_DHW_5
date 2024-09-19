@@ -8,6 +8,7 @@ pyvenv.cfg
 Include/
 Notes/htmls.py
 Notes/html_button.py
+Notes/streamlit_json_viewer.py
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -173,3 +174,4 @@ cython_debug/
 #.idea/
 /Notes/htmls.py
 /Notes/html_button.py
+/alchemy_test.py

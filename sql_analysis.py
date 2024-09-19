@@ -7,8 +7,8 @@ This is for Querying the SQL table and getting the output.
 
 import pandas as pd
 import streamlit as st
-from sqlalchemy import create_engine
-from sqlalchemy import text as text_conv
+from sqlalchemy import create_engine, text
+
 
 def get_sqlalchemy_engine():
     return create_engine(st.session_state["mysql_config"])
@@ -109,17 +109,13 @@ def query_sql():
     if st.button("Run Query"):
         engine = get_sqlalchemy_engine()
         st.subheader("SQL Query:")
-        st.code(sql_query.text_conv, language='sql')
+        st.code(sql_query, language='sql')
         st.divider()
-
-        try:
-            with engine.connect() as connection:
-                result = connection.execute(sql_query)
+        if st.session_state["MySQL_URL"].is_connected:
+            with st.session_state["MySQL_URL"].connection as connection:
+                result = connection.execute(text(sql_query))
                 sql_query_output = result.fetchall()
 
-            st.subheader("Results:")
-            df = pd.DataFrame(sql_query_output, columns=columns).reset_index(drop=True)
-            st.dataframe(df)
-
-        except Exception as e:
-            st.error(f"An error occurred: {e}")
+        st.subheader("Results:")
+        df = pd.DataFrame(sql_query_output, columns=columns).reset_index(drop=True)
+        st.dataframe(df)

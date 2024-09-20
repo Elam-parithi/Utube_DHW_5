@@ -15,8 +15,8 @@ from ploting_page import analyze_page
 from about_page import about_page
 from html_addon import statusbar
 
-image_path = r"Icons/sunflower.png"
-img = Image.open(image_path)
+
+img = Image.open(basic_settings['image_path'])
 img = img.resize((16, 16))
 
 # Streamlit page configuration
@@ -33,7 +33,7 @@ annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-
 statusbar()
 selected_option = option_menu('', ["config", "home", "storage", "analysis", "plot", "about"],
                               icons=['gear', 'house', "database", "list-task", 'bi-bar-chart', 'info-square'],
-                              default_index=0, orientation="horizontal")
+                              default_index=basic_settings['default_index'], orientation="horizontal")
 
 if selected_option == "config":
     config_page()

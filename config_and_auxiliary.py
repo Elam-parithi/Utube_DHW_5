@@ -18,11 +18,16 @@ you don't need to enter the credentials directly here. unless using permanently.
 But your can add it at the time of execution in UI.
 """
 
-MAX_CHANNELS = 10
 directory_settings = {
     'extracted json folder' : r'./extracted_data',
     'SQLite3 database storge folder' : r'./Database_storage',
     'Debug logs folder' : r'./logs',
+}
+
+basic_settings={
+    'default_index': 0,
+    "image_path" : r"Icons/sunflower.png",
+    "MAX_CHANNELS" : 10
 }
 
 light_colors = [

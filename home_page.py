@@ -12,7 +12,7 @@ from datetime import datetime
 from streamlit_tags import st_tags
 from googleapiclient.errors import HttpError
 from httplib2 import ServerNotFoundError
-from config_and_auxiliary import yt, key_hide, MAX_CHANNELS, d_channel, custom_annotation
+from config_and_auxiliary import yt, basic_settings, d_channel, custom_annotation
 
 directory_path = r"extracted_data"
 
@@ -51,7 +51,7 @@ def home_page():
     with st.form(key="ChannelID_names", clear_on_submit=False):
         keywords = st_tags(
             label="Youtube channel ID/names (max 10):",
-            maxtags=MAX_CHANNELS,
+            maxtags=basic_settings['MAX_CHANNELS'],
             key="keywords",
             value=d_channel
         )

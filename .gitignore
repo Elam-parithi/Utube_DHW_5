@@ -1,6 +1,4 @@
 
-logs/Utube_website-2024-08-19.log
-.streamlit/
 .streamlit/secrets.toml
 Scripts/
 .idea

@@ -1,0 +1,27 @@
+
+
+/*
+From Bannanatree tutorial.
+ @import url('https://fonts.googleapis.com/css');
+*/
+
+* {font-family: sans-serif;}
+
+a {
+    text-decoration: none;
+    font-weight: 500;
+}
+
+a:hover {
+    color: #f94e4e !important;
+    text-decoration: none;
+}
+
+
+#MainMenu {visibility: hidden;}
+header{visibility: hidden;}
+footer{visibility: hidden;}
+
+h1{
+    color: red;
+}

@@ -30,6 +30,9 @@ basic_settings={
     "MAX_CHANNELS" : 10
 }
 
+#tutorial at bannanatree timeline: 3:36
+css_file = r"styles/main.css"
+
 light_colors = [
     "#cfc",  # Light Green
     "#ffb",  # Light Yellow
@@ -183,4 +186,3 @@ for folder_name_str in folder_path:
     else:
         # print(f"Folder '{folder_name}' already exists.")
         pass
-

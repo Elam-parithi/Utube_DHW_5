@@ -5,7 +5,7 @@ From Bannanatree tutorial.
  @import url('https://fonts.googleapis.com/css');
 */
 
-* {font-family: sans-serif;}
+* {font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;}
 
 a {
     text-decoration: none;
@@ -24,4 +24,5 @@ footer{visibility: hidden;}
 
 h1{
     color: red;
+    font-family: consolas;
 }

@@ -2,6 +2,8 @@ from config_and_auxiliary import *
 
 
 def about_page():
+    with open(css_file) as f:
+        st.html(f"<style>{format(f.read)}<style>")
     """
         Users to get a glance and then how to use this app.
         """
@@ -24,7 +26,7 @@ def about_page():
 
     st.write("""
         I'm [Elamparithi](https://www.linkedin.com/in/elamparithi-t/) Neo Data Scientist: Transforming Complexity into Insight with Precision and Purpose.
-        Neo Data Scientist: Driven and passionate about leveraging data to uncover insights and solve complex problems with Precision and Purpose, I am transitioning into the field of Data Science after completing an intensive course at GUVI. The curriculum covered Machine Learning, Deep Learning, Artificial Intelligence, Prompt Engineering, Data Visualization, Tableau, PowerBI and more, providing me with a versatile and comprehensive skill set.
+        Data Scientist: Driven and passionate about leveraging data to uncover insights and solve complex problems with Precision and Purpose, I am transitioning into the field of Data Science after completing an intensive course at GUVI. The curriculum covered Machine Learning, Deep Learning, Artificial Intelligence, Prompt Engineering, Data Visualization, Tableau, PowerBI and more, providing me with a versatile and comprehensive skill set.
 
         During my career break, I immersed myself in the rapidly evolving world of data science. Inspired by the potential of technology to drive business transformations, I committed to upskilling and pivoting my career towards this exciting field. My objective is to apply my new skills to deliver data-driven solutions that optimize processes, enhance decision-making, and drive growth.
 

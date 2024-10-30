@@ -7,6 +7,7 @@ Include/
 Notes/htmls.py
 Notes/html_button.py
 Notes/streamlit_json_viewer.py
+Test_dir
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -173,3 +174,4 @@ cython_debug/
 /Notes/htmls.py
 /Notes/html_button.py
 /alchemy_test.py
+/Test_dir/

@@ -1,13 +1,18 @@
 #!Utube_DHW_5\.venv\Scripts\python
-
 import pandas as pd
 from sqlalchemy.schema import CreateSchema
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine, ForeignKey, exc
 from sqlalchemy import Column, String, Integer, BigInteger, Text, DateTime, Index
 
-schema_name = 'guvi_orm'
-connection_string = f'mysql+pymysql://guvi_user:1king#lanka@localhost:3306/{schema_name}'
+"""
+Author: Elamparithi
+Last_update: 04 Nov 24 06:54pm
+Note: This code is working without problems.
+"""
+
+schema_name = 'guvi_orm3'
+connection_string = f'mysql+pymysql://guvi_user:password@localhost:3306/{schema_name}'
 Base = declarative_base()
 
 

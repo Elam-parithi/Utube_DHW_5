@@ -1,5 +1,4 @@
 
-
 /*
 From Bannanatree tutorial.
  @import url('https://fonts.googleapis.com/css');
@@ -17,10 +16,10 @@ a:hover {
     text-decoration: none;
 }
 
-
 #MainMenu {visibility: hidden;}
 header{visibility: hidden;}
 footer{visibility: hidden;}
+
 
 h1{
     color: red;

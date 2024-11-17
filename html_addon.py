@@ -1,4 +1,3 @@
-
 import streamlit as st
 
 
@@ -35,3 +34,4 @@ def statusbar():
         """
     st.html(html_code)
     return
+

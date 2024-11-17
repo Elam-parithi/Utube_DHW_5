@@ -15,6 +15,17 @@ from ploting_page import analyze_page
 from about_page import about_page
 from html_addon import statusbar
 
+import logging
+from logging.handlers import RotatingFileHandler
+
+logger = logging.getLogger('extractor_app')
+logger.setLevel(logging.DEBUG)
+handler = RotatingFileHandler('logs/youtube_dhw.log', maxBytes=5 * 1024 * 1024, backupCount=20)
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
 
 img = Image.open(basic_settings['image_path'])
 img = img.resize((16, 16))
@@ -22,7 +33,7 @@ img = img.resize((16, 16))
 # Streamlit page configuration
 st.set_page_config(
     page_title="Utube DHW 5",
-    page_icon=img,  # "random" for choosing random icons.
+    page_icon=img,
     layout='wide'
 )
 st.header(":sunglasses: :red[YouTube] :blue[DataHarvesting] and :green[WareHosing]")

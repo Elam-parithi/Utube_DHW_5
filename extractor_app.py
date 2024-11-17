@@ -25,15 +25,13 @@ st.set_page_config(
     page_icon=img,  # "random" for choosing random icons.
     layout='wide'
 )
-
+st.header(":sunglasses: :red[YouTube] :blue[DataHarvesting] and :green[WareHosing]")
+annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)',
+                       'Data Scientist  |  Former System Administrator', "#d08cf8"))
 with open(css_file) as f:
     st.markdown(f"<style>{format(f.read())}<style>",
                 unsafe_allow_html=True)
-    
-# Streamlit page title and author annotation
-st.title("YouTube Data Harvesting and Warehousing")
-annotated_text('by ', ('[Elamparithi T](https://www.linkedin.com/in/elamparithi-t/)',
-                       'Data Scientist  |  System Administrator', "#d08cf8"))
+
 statusbar()
 selected_option = option_menu('', ["config", "home", "storage", "analysis", "plot", "about"],
                               icons=['gear', 'house', "database", "list-task", 'bi-bar-chart', 'info-square'],

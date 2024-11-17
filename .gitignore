@@ -1,4 +1,4 @@
-alchemy_test.py
+temp/alchemy_test.py
 .streamlit/secrets.toml
 Scripts/
 .idea
@@ -8,6 +8,7 @@ Notes/htmls.py
 Notes/html_button.py
 Notes/streamlit_json_viewer.py
 Test_dir
+jupyter_notes/.secret_keys_secure.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -173,5 +174,6 @@ cython_debug/
 #.idea/
 /Notes/htmls.py
 /Notes/html_button.py
-/alchemy_test.py
+/temp/alchemy_test.py
 /Test_dir/
+/jupyter_notes/.secret_keys_secure.json

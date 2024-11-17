@@ -1,9 +1,9 @@
 #!Utube_DHW_5\.venv\Scripts\python
 import pandas as pd
-from sqlalchemy.schema import CreateSchema
-from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy import Column, String, Integer, BigInteger, Text, DateTime
 from sqlalchemy import create_engine, exc, ForeignKey
-from sqlalchemy import Column, String, Integer, BigInteger, Text, DateTime, Index
+from sqlalchemy.orm import relationship, declarative_base
+from sqlalchemy.schema import CreateSchema
 
 """
     Author: Elamparithi
@@ -35,13 +35,14 @@ class Channel_class(Base):
             'channel_type':self.channel_type,
             'channel_views':self.channel_views,
             'channel_description':self.channel_description,
-            'channel_status':self.channel_status }
+            'channel_status':self.channel_status}
         return fstr_transcoder(repr_pretty_)
 
 
 class Playlist_class(Base):
     __tablename__ = 'playlists'
-    playlist_id = Column(String(255), nullable=False, index=True, primary_key=True, comment='Unique identifier for the playlist')
+    playlist_id = Column(String(255), nullable=False, index=True, primary_key=True,
+                         comment='Unique identifier for the playlist')
     channel_id = Column(String(255), comment=' channel table')  # ForeignKey("channels.channel_id"), 
     playlist_name = Column(String(255), comment='Name of the playlist')
 
@@ -161,6 +162,13 @@ def check_create_database(connection_string, schema_name):
 
 
 if __name__ == '__main__':
-    DB_name = 'guvi_dfgsorm05hj'
-    conn_str = f'mysql+pymysql://guvi_user:1king#lanka@localhost:3306/{DB_name}'
+    from dotenv import load_dotenv
+    import os
+
+    load_dotenv('.secrets')
+    db_precon = os.getenv('pre_conn')
+
+    DB_name = 'guviDB_python'
+    conn_str = f'{db_precon}{DB_name}'
+    print(conn_str)
     check_create_database(conn_str, DB_name)

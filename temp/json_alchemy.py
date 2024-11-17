@@ -182,7 +182,7 @@ Base.metadata.create_all(engine)
 print("All tables created.")
 Session = sessionmaker(bind=engine, autoflush=False)
 session = Session()
-extracted_dir = r"C:\Users\Elamparithi\PycharmProjects\Utube_DHW_5\extracted_data"
+extracted_dir = r"/extracted_data"
 
 filepath = ['Behindwoods TV-20240825-115545.json', 'GUVI-20240907-154356.json',
             'Sahi Siva-20240913-032253.json',

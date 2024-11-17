@@ -14,7 +14,7 @@ def get_sqlalchemy_engine():
     return create_engine(st.session_state["mysql_config"])
 
 
-# todo:create a separate query file for all the SQL query here.
+# todo:create a separate query file for all the SQL query here. commit create schema and write schema at the same time.
 
 query_list = [
     'Select your Question',

@@ -12,9 +12,9 @@ from datetime import datetime
 from streamlit_tags import st_tags
 from googleapiclient.errors import HttpError
 from httplib2 import ServerNotFoundError
-from config_and_auxiliary import yt, basic_settings, d_channel, custom_annotation
+from config_and_auxiliary import yt, basic_settings, d_channel, custom_annotation, directory_settings
 
-directory_path = r"extracted_data"
+directory_path = directory_settings['extracted json folder']
 
 
 def save_dict_to_json(channel_data_e, item):

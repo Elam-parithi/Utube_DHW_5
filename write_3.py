@@ -11,6 +11,8 @@ import sqlalchemy.exc
 import datetime
 from create_db import *
 import logging
+import pymysql.err
+from config_and_auxiliary import log_location
 
 """
     Author: Elamparithi 
@@ -21,18 +23,13 @@ import logging
 # SADeprecationWarning: The Session.close_all() method is deprecated and will be removed in a future release.
 # Please refer to session.close_all_sessions(). (deprecated since: 1.3)
 
-load_dotenv('.secrets')
-db_precon = os.getenv('pre_conn')
-DB_name = os.getenv('DB_NAME')
-# Create a logger for this module
-logger = logging.getLogger('write3.log')
-extracted_dir: str = r"/extracted_data"
+
+logger = logging.getLogger('logs/application_log/write3.log')
 
 
 class DB_writer:
-    def __init__(self, Server_String, Schema_name):
-        self.file_name = None
-        self.engine = create_engine(f'{Server_String}{Schema_name}', echo=False)
+    def __init__(self, engine_name):
+        self.engine = engine_name
         Class_Session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         self.session = Class_Session()
 
@@ -74,13 +71,20 @@ class DB_writer:
         @param data_for_table: record to add in session, then commiting.
         @return: None
         """
-        with self.session.no_autoflush:
-            try:
+        try:
+            with self.session.no_autoflush:
                 self.session.add(data_for_table)
-            except sqlalchemy.exc.IntegrityError as e:
+        except sqlalchemy.exc.IntegrityError as e:  # sqlalchemy.exc.IntegrityError
+            matches = re.findall(r"Duplicate entry", str(e))
+            if 0 < len(matches):
+                print("Duplicate entry detected, passing the error up.")
+                pass
+            else:
                 self.session.rollback()  # Roll back the session after an error
                 logger.warning("foreign relations not found.")
                 logger.warning(f"Error occurred: {e}")
+        except pymysql.err.IntegrityError as e:
+            logger.warning("Pymysql error")
 
     def write_to_sql(self, json_datum: dict):
         """
@@ -167,15 +171,18 @@ class DB_writer:
 
 
 if __name__ == "__main__":
+    load_dotenv('.secrets')
+    db_precon = os.getenv('pre_conn')
+    DB_name = os.getenv('DB_NAME')
+    extracted_dir: str = r".\extracted_data"
+
     filepath = ['GUVI-20240907-154356.json',
                 'Sahi Siva-20240913-032253.json',
                 'Behindwoods TV-20240825-115545.json',
                 'SHIVA SAI ENTERTAINMENT CHANNEL-20240824-190244.json']
 
     engine = check_create_database(f'{db_precon}{DB_name}')
-    engine.dispose()
-
-    writer = DB_writer(db_precon, DB_name)
+    writer = DB_writer(engine)
     for file in filepath:
         full_path = os.path.join(extracted_dir, file)
         filename = os.path.basename(full_path)

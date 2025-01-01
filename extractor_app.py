@@ -18,9 +18,10 @@ from html_addon import statusbar
 import logging
 from logging.handlers import RotatingFileHandler
 
+logfile = locate_log('app', 'youtube_dhw.log')
 logger = logging.getLogger('extractor_app')
 logger.setLevel(logging.DEBUG)
-handler = RotatingFileHandler('logs/youtube_dhw.log', maxBytes=5 * 1024 * 1024, backupCount=20)
+handler = RotatingFileHandler(logfile, maxBytes=5 * 1024 * 1024, backupCount=20)
 handler.setLevel(logging.DEBUG)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)

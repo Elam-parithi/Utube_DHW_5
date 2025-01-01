@@ -8,7 +8,6 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 from sqlalchemy import create_engine, Table, MetaData, select, insert
 from sqlalchemy.orm import sessionmaker
 
-# todo: write to read comments table from SQL and process this with NLTK.
 
 print(nltk.__version__)
 
@@ -18,7 +17,7 @@ nltk.download('vader_lexicon')
 # Initialize sentiment analyzer
 sia = SentimentIntensityAnalyzer()
 
-# MySQL connection string
+# MySQL's connection string
 DB_URL = 'mysql+pymysql://guvi_user:1king#lanka@localhost:3306/youtube_db'
 
 # Setup SQLAlchemy engine and session

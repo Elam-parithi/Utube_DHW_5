@@ -7,7 +7,6 @@ import pandas as pd
 import streamlit as st
 from code_editor import code_editor
 from sqlalchemy import text
-from code_editor_2 import SQL_Code_Editor
 
 query_list = [
     'Select your Question',
@@ -147,14 +146,15 @@ def query_sql():
             selected_query = response_dict['text']
         if selected_query == '':
             print("No Output")
-        print(selected_query)
+        # print(selected_query)
         if st.session_state["MySQL_URL"].is_connected:
+            st.subheader("Results:")
             try:
                 df = pd.read_sql_query(text(selected_query), st.session_state["MySQL_URL"].engine)
                 if df.empty:
                     st.error("The query executed successfully, but returned no data.")
+                    st.empty()
                 else:
-                    st.subheader("Results:")
                     st.dataframe(df)
                     st.toast("Hurray! RETURNED SOME DATA")
             except Exception as e:

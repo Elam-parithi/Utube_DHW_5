@@ -48,6 +48,8 @@ def home_page():
     This is the Home page where you enter channel name/ID and get details.
     """
     st.subheader("Home")
+    st.write("select channels that are small. If you select bigger channels they take more time to "
+             "extract, upload to MySQL, Sentiment Analysis.")
     with st.form(key="ChannelID_names", clear_on_submit=False):
         keywords = st_tags(
             label="Youtube channel ID/names (max 10):",
@@ -73,7 +75,10 @@ def home_page():
                 chid_list.append(channel_id)
 
             st.write('All channel ID: ')
-            custom_annotation(chid_list)
+            if len(chid_list) == 0:
+                pass
+            else:
+                custom_annotation(chid_list)
             file_list = []
 
             for item in chid_list:
@@ -98,5 +103,5 @@ def home_page():
                             st.error(f"An error occurred: e.resp.status==>>{e.resp.status}")
                             st.error(f"Error extracting data for channel ID {item}: {e}")
 
-            # st.session_state.file_lists = file_list
+            st.session_state.file_lists = file_list
             st.write("Files:", custom_annotation(file_list))

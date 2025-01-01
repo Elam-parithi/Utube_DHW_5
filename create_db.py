@@ -4,8 +4,10 @@
 create_db.py for creating Schema and Tables.
 """
 
-from sqlalchemy import Column, String, Integer, BigInteger, Text, DateTime, ForeignKey, create_engine, exc
+from sqlalchemy import Column, String, Integer, BigInteger, Text, DateTime, Float
+from sqlalchemy import ForeignKey, create_engine, exc
 from sqlalchemy.orm import relationship, declarative_base
+from config_and_auxiliary import locate_log
 from sqlalchemy.schema import CreateSchema
 from dotenv import load_dotenv
 import logging
@@ -17,9 +19,13 @@ import os
     Fully functional as of last update.
 """
 
+log_file = locate_log('app', 'create_db.log')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    handlers=[logging.FileHandler(log_file)])
+logger = logging.getLogger('create_db')
+
 Base = declarative_base()
-# Create a logger for this module
-logger = logging.getLogger('create_db.log')
 
 
 class Channel_class(Base):
@@ -76,6 +82,8 @@ class Comment_class(Base):
     comment_text = Column(Text, nullable=False, comment="Text of the comment")
     comment_author = Column(String(255), nullable=False, comment="Name of the comment author")
     comment_published_date = Column(DateTime, nullable=False, comment="Date and time when the comment was published")
+    sentiment = Column(Float, comment="sentiment value for given comment comments.")
+    sentiment_type = Column(String(20), comment="sentiment type for given comments.")
 
     video_relation = relationship("Video_class", back_populates="comments")
 
@@ -97,6 +105,7 @@ def separate_connection_string(conn_string: str):
     else:
         conn_url = conn_string  # No '/' found
         conn_schema = ''
+    logger.info('connection string separated')
     return conn_url, conn_schema
 
 
@@ -111,7 +120,7 @@ def check_create_database(connection_string: str):
     connection_URL, connection_Schema = separate_connection_string(connection_string)
     logger.info(f"Connection URL: {connection_URL}")
     logger.info(f"Connection Schema: {connection_Schema}")
-    engine_local = create_engine(connection_URL, echo=False)
+    engine_local = create_engine(connection_URL, echo=True)
     with engine_local.connect() as conn:
         try:
             conn.execute(CreateSchema(connection_Schema))
@@ -123,16 +132,16 @@ def check_create_database(connection_string: str):
             engine_local.dispose()
             logger.info("Connection closed.")
     # create Schema. If above try run well. no problem running below.
-    engine_tabled = create_engine(connection_string, echo=False)
+    engine_tabled = create_engine(connection_string, echo=True)
     Base.metadata.create_all(engine_tabled)
     logger.info("all Tables created.")
     return engine_tabled
 
 
 if __name__ == '__main__':
-    load_dotenv('.secrets')
+    load_dotenv('.secrets')  # another local secret instead of st.secrets just for running it offline.
     db_precon = os.getenv('pre_conn')
-    DB_name = os.getenv('DB_NAME')
+    DB_name = os.getenv('DB_NAME')  # "youtube_dhw"
 
     engine = check_create_database(f'{db_precon}{DB_name}')
     engine.dispose()

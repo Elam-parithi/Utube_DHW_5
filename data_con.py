@@ -16,7 +16,6 @@ from create_db import check_create_database
 from config_and_auxiliary import directory_settings
 
 
-# todo: check for SQL URL for SQLite3 and MySQL and process them separately. using write_3 and write_4
 
 
 class sql_tube:
@@ -26,7 +25,6 @@ class sql_tube:
                  "mysql+pymysql://<username>:<password>@<host>:<port>/<dbname>")
 
     def validate_sql_url(self, url):
-        # FIXME: pattern miss matching with default server URL resolve this to working condition.
         """
         Validates a given URL to ensure it follows the MySQL connection URL format.
         Displays Streamlit pop-up errors if the URL is invalid.
@@ -68,7 +66,6 @@ class sql_tube:
         local DB: sqlite:///Database_storage/Utube_DHW-5.db
         MySQL: mysql+pymysql://username:password@host:port/dbname
         """
-        # FIXME: replace this with self.validate_sql_url(url) after resolving that method.
         if True:
             try:
                 self.engine = check_create_database(self.connection_str)
@@ -107,7 +104,6 @@ class sql_tube:
             self.engine.dispose()
 
 
-# todo: Complete mongo db and test.
 class mongo_tube:
     """
     This class is for writing the data to the Mongo database.

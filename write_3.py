@@ -4,27 +4,32 @@
 Module for writing a json dictionary to MySQL DataBase.
 """
 
-import json
 import re
+import json
+import datetime
+import pymysql.err
 import sqlalchemy.orm
 import sqlalchemy.exc
-import datetime
 from create_db import *
+from NLTK_Sentiment import *
+from config_and_auxiliary import locate_log
 import logging
-import pymysql.err
-from config_and_auxiliary import log_location
+
 
 """
     Author: Elamparithi 
-    Last Update: 17 nov 24
+    Last Update: 24 nov 24
     Fully functional as of last update.
 """
 
 # SADeprecationWarning: The Session.close_all() method is deprecated and will be removed in a future release.
 # Please refer to session.close_all_sessions(). (deprecated since: 1.3)
 
-
-logger = logging.getLogger('logs/application_log/write3.log')
+logfile = locate_log('app', 'write3.log')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    handlers=[logging.FileHandler(log_file), logging.StreamHandler()])
+logger = logging.getLogger('write3')
 
 
 class DB_writer:
@@ -83,7 +88,7 @@ class DB_writer:
                 self.session.rollback()  # Roll back the session after an error
                 logger.warning("foreign relations not found.")
                 logger.warning(f"Error occurred: {e}")
-        except pymysql.err.IntegrityError as e:
+        except pymysql.err.IntegrityError:
             logger.warning("Pymysql error")
 
     def write_to_sql(self, json_datum: dict):
@@ -150,15 +155,43 @@ class DB_writer:
 
                 for comment_dict in video_data["Comments"].values():
                     comment_cid = comment_dict["Comment_Id"]
+                    comment_ctext = comment_dict["Comment_Text"]
                     comment_record = Comment_class(
                         comment_id=comment_cid,
                         video_id=video_vid,
-                        comment_text=comment_dict["Comment_Text"],
+                        comment_text=comment_ctext,
                         comment_author=comment_dict["Comment_Author"],
                         comment_published_date=self.convert_to_datetime(comment_dict["Comment_PublishedAt"])
+                        # sentiment and sentiment_type will be processed separately for speed.
                     )
                     self.write_handler(comment_record)
         self.session.commit()  # for playlist as it is flushed on video processing. this only process comments records.
+
+    def sentiment_analysis_update(self):
+        """
+        separate method for reading and updating the table with sentiment and sentiment_type.
+        processing the comment text when running the extraction
+        will increase the extraction time. Also, might lead to other issues.
+        """
+        # print("Sentiment analysis started.")
+        nltk_analyzer = CommentAnalyzer()
+        comments = self.session.query(Comment_class).all()
+        # print(len(comments))
+        for comment in comments:
+            content_text = comment.comment_text
+            # print(content_text)
+            compound_result = nltk_analyzer.analyze_sentiment(content_text)
+            if compound_result:
+                sentiment_string = nltk_analyzer.sentiment_type(compound_result)
+                comment.sentiment = compound_result['compound']
+                # print(f"Got compound result {comment.sentiment}")
+                comment.sentiment_type = sentiment_string
+                self.session.add(comment)
+        try:
+            self.session.commit()
+        except Exception as e:
+            self.session.rollback()
+            logger.debug(f"Error Commenting: {e}")
 
     def close_it(self):
         """
@@ -176,10 +209,9 @@ if __name__ == "__main__":
     DB_name = os.getenv('DB_NAME')
     extracted_dir: str = r".\extracted_data"
 
-    filepath = ['GUVI-20240907-154356.json',
-                'Sahi Siva-20240913-032253.json',
-                'Behindwoods TV-20240825-115545.json',
-                'SHIVA SAI ENTERTAINMENT CHANNEL-20240824-190244.json']
+    filepath = ['Behindwoods TV-20240825-115545.json',
+                'Madras foodie-20241124-040846.json','Sahi Siva-20240913-032253.json',
+                'SHIVA SAI ENTERTAINMENT CHANNEL-20240824-190244.json']   # list of files here.
 
     engine = check_create_database(f'{db_precon}{DB_name}')
     writer = DB_writer(engine)
@@ -187,8 +219,11 @@ if __name__ == "__main__":
         full_path = os.path.join(extracted_dir, file)
         filename = os.path.basename(full_path)
         with open(full_path, 'r') as file_data:
-            print(f'processing {filename}...')
+            print(f' preprocessing {filename}...')
             data = json.load(file_data)
             writer.write_to_sql(data)
+    print("Data writen to sql, updating sentiment")
+    writer.sentiment_analysis_update()
+    print("Sentiment update complete")
     writer.close_it()
     print("Session closed and engine disposed.")

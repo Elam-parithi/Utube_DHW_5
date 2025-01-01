@@ -9,9 +9,34 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import logging
 
-# TODO: update GUVI formater check with doc for verification.
 
 logger = logging.getLogger('Youtube_Extractor')
+
+
+def check_youtube_api_key(api_key: str):
+    """
+    Check for YouTube API key is valid or not. True if valid.
+    @param api_key:
+    @return Bool:
+    """
+    try:
+        youtube = build('youtube', 'v3', developerKey=api_key)
+        response = youtube.channels().list(part='snippet', id='UC_x5XG1OV2P6uZZ5FSM9Ttw').execute()
+        print("API key is valid and working!")
+        print("Channel Title:", response['items'][0]['snippet']['title'])
+        return True
+
+    except HttpError as e:
+        if e.resp.status == 403:
+            print("Invalid API key or quota exceeded.")
+        elif e.resp.status == 400:
+            print("Bad request. Possible misconfiguration.")
+        else:
+            print("An HTTP error occurred:", e)
+        return False
+    except Exception as e:
+        print("An unexpected error occurred:", e)
+        return False
 
 
 def check_api_key(function_api_key):

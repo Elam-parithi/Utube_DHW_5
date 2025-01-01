@@ -1,6 +1,7 @@
 # Your Credentials your responsibility.
+
 import json
-import random
+import random, os
 import string
 import streamlit as st
 from pathlib import Path
@@ -18,9 +19,11 @@ you don't need to enter the credentials directly here. unless using permanently.
 But your can add it at the time of execution in UI.
 """
 
+# database_url = 'mysql+pymysql://user:password@host/dbname'
+# sqlite:///Database_storage/Utube_DHW-5.db  # SQLite
+
 directory_settings = {
     'extracted json folder' : r'./extracted_data',
-    'SQLite3 database storge folder' : r'./Database_storage',
     'Debug logs folder' : r'./logs',
 }
 
@@ -56,12 +59,34 @@ light_colors = [
     "#fdb"  # Light Salmon
 ]
 
+log_location = {
+    "api" : r"logs/API_log",
+    "app" : r"logs/application_log",
+    "exr" : r"logs/extraction_log",
+    "oth" : r"logs/others"
+}
 
-# database_url = 'mysql+pymysql://user:password@host/dbname'
-# sqlite:///Database_storage/Utube_DHW-5.db  # SQLite
+def locate_log(short_code: str, filename: str):
+    """
+    Joins and returns the matching file path for short_code name with given filename.
+    Manually include .log extension in filename.
+    @param short_code: three word shortcode
+    @param filename: filename with extension
+    @return: filepath with filename
+    """
+    if short_code not in log_location.keys():
+        return os.path.join(r'logs',filename)
+    file_path = os.path.join(log_location[short_code],filename)
+    os.makedirs(os.path.dirname(file_path), exist_ok=True)
+    return file_path
 
 
-def pick_random_color(unused_colors):
+def pick_random_color(unused_colors: list):
+    """
+    Picks a colors for given list of colors
+    @param unused_colors: list of color
+    @return: return randomly selected one
+    """
     if len(unused_colors) == 0:
         unused_colors = light_colors.copy()
     random_number = random.randrange(0, len(unused_colors))
@@ -69,7 +94,12 @@ def pick_random_color(unused_colors):
     return remaining
 
 
-def custom_annotation(t_list):
+def custom_annotation(t_list: list):
+    """
+    Annotates items with given list of items with comma(') inbetween them.
+    @param t_list: list of strings
+    @return: annotated list
+    """
     my_list = []
     colors = []
     for count, item in enumerate(t_list):
@@ -156,14 +186,15 @@ if not database_URI:
 # Streamlit session state initialization
 configurations = {
     "first_run": True,
+    # values
     "api_key":API_key,
     "mysql_config":database_URI,
     "mongo_config":MongoDB_URI,
-
+    # constructor
     "youTube_API":None,
     "MySQL_URL":None,
     "MongoDB_URI":None,
-
+    # others
     "file_lists":None,
     "json_result":None,
     "Selected_files": None,

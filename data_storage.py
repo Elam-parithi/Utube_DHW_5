@@ -3,7 +3,6 @@
 from os import path
 import zipfile
 from pathlib import Path
-import streamlit as st
 from data_con import *
 from annotated_text import annotated_text
 from config_and_auxiliary import custom_annotation, directory_settings
@@ -72,9 +71,10 @@ def Data_storage_tab():
     custom_annotation(st.session_state.Selected_files)
     if st.button("Upload selected"):
         if storage_sql:
-            for file_name in st.session_state.Selected_files:
-                filename = path.basename(file_name)
-                st.session_state["MySQL_URL"].json_2_sql(filename, file_name)
-            st.write("storage_sql")
+            st.session_state["MySQL_URL"].json_2_sql(st.session_state.Selected_files)
+            st.write("Data writen to MySQL")
         if storage_mon:
-            st.write("storage_mon")
+            if st.session_state["MongoDB_URI"].is_connected:
+                st.session_state["MongoDB_URI"].JSON_2_mongo(json_file, db_name, collection_name)
+                st.session_state["MongoDB_URI"].close_mongo()
+            st.write("Data writen to MongoDB URI")

@@ -9,7 +9,7 @@ from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 import logging
 
-
+logging.basicConfig(encoding='utf-8')
 logger = logging.getLogger('Youtube_Extractor')
 
 
@@ -341,7 +341,7 @@ if __name__ == "__main__":
     dt = yt.guvi_format(cid)
     import json
 
-    file_path = r'extracted_data/guvi4.json'
+    file_path = r'extracted_data/madras_foodie.json'
     with open(file_path, 'w') as file:
         json.dump(dt, file, indent=4)  # The indent argument is optional, it just makes the output more readable
     print("Program was completed.")

@@ -1,3 +1,7 @@
+"""
+Nltk_downloading.py
+This program to analyze the extracted comment and load the comment to the SQL server.
+"""
 import nltk
 import logging
 import os

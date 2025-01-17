@@ -207,7 +207,7 @@ if __name__ == "__main__":
     load_dotenv('.secrets')
     db_precon = os.getenv('pre_conn')
     DB_name = os.getenv('DB_NAME')
-    extracted_dir: str = r".\extracted_data"
+    extracted_dir: str = r"extracted_data"
 
     filepath = ['Behindwoods TV-20240825-115545.json',
                 'Madras foodie-20241124-040846.json','Sahi Siva-20240913-032253.json',

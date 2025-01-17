@@ -75,6 +75,7 @@ def Data_storage_tab():
             st.write("Data writen to MySQL")
         if storage_mon:
             if st.session_state["MongoDB_URI"].is_connected:
-                st.session_state["MongoDB_URI"].JSON_2_mongo(json_file, db_name, collection_name)
+                st.session_state["MongoDB_URI"].JSON_2_mongo(JSON_filename=json_file, DB_name=db_name,
+                                                             collection=collection_name)
                 st.session_state["MongoDB_URI"].close_mongo()
             st.write("Data writen to MongoDB URI")

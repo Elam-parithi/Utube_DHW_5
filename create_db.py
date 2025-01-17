@@ -120,7 +120,7 @@ def check_create_database(connection_string: str):
     connection_URL, connection_Schema = separate_connection_string(connection_string)
     logger.info(f"Connection URL: {connection_URL}")
     logger.info(f"Connection Schema: {connection_Schema}")
-    engine_local = create_engine(connection_URL, echo=True)
+    engine_local = create_engine(connection_URL, echo=False)
     with engine_local.connect() as conn:
         try:
             conn.execute(CreateSchema(connection_Schema))

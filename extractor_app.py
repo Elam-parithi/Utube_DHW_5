@@ -1,6 +1,6 @@
 # extractor_app.py
 
-# This is a streamlit website run this directly on command prompt using streamlit run extractor_app.py
+# This is a streamlit website run this directly on command prompt using "streamlit run extractor_app.py"
 
 from PIL import Image
 from config_and_auxiliary import *
@@ -11,7 +11,7 @@ from config_page import config_page
 from home_page import home_page
 from data_storage import Data_storage_tab
 from sql_analysis import query_sql
-from ploting_page import analyze_page
+from plotting_page import analyze_page
 from about_page import about_page
 from html_addon import statusbar
 

@@ -16,8 +16,6 @@ from create_db import check_create_database
 from config_and_auxiliary import directory_settings
 
 
-
-
 class sql_tube:
     @staticmethod
     def URL_unmatch_toast():

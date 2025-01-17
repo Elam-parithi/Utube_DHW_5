@@ -58,6 +58,7 @@ def home_page():
             value=d_channel
         )
         if st.form_submit_button("Proceed"):
+            print("Proceeding")
             chid_list = []
             utube_generator = yt.YouTubeDataExtractor(st.session_state["api_key"])
 

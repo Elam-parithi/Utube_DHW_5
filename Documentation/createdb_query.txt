@@ -1,0 +1,52 @@
+
+CREATE TABLE channels (
+	channel_id VARCHAR(255) NOT NULL,
+	channel_name VARCHAR(255) NOT NULL,
+	channel_type VARCHAR(255) NOT NULL,
+	channel_views BIGINT NOT NULL,
+	channel_description TEXT NOT NULL,
+	channel_status VARCHAR(255) NOT NULL,
+	PRIMARY KEY (channel_id),
+	UNIQUE (channel_id)
+)
+
+CREATE TABLE playlists (
+	playlist_id VARCHAR(255) NOT NULL,
+	channel_id VARCHAR(255) NOT NULL,
+	playlist_name VARCHAR(255) NOT NULL,
+	PRIMARY KEY (playlist_id),
+	FOREIGN KEY(channel_id) REFERENCES channels (channel_id)
+)
+
+CREATE TABLE videos (
+	video_id VARCHAR(255) NOT NULL,
+	playlist_id VARCHAR(255),
+	channel_id VARCHAR(255) NOT NULL,
+	video_name VARCHAR(255) NOT NULL,
+	video_description TEXT,
+	published_date DATETIME NOT NULL,
+	view_count INTEGER NOT NULL,
+	like_count INTEGER NOT NULL,
+	dislike_count INTEGER NOT NULL,
+	favorite_count INTEGER NOT NULL,
+	comment_count INTEGER NOT NULL,
+	duration INTEGER NOT NULL,
+	thumbnail VARCHAR(255),
+	caption_status VARCHAR(255),
+	PRIMARY KEY (video_id),
+	FOREIGN KEY(playlist_id) REFERENCES playlists (playlist_id),
+	FOREIGN KEY(channel_id) REFERENCES channels (channel_id)
+)
+
+CREATE TABLE comments (
+	id INTEGER NOT NULL AUTO_INCREMENT,
+	comment_id VARCHAR(255) NOT NULL,
+	video_id VARCHAR(255) NOT NULL,
+	comment_text TEXT NOT NULL,
+	comment_author VARCHAR(255) NOT NULL,
+	comment_published_date DATETIME NOT NULL,
+	sentiment FLOAT,
+	sentiment_type VARCHAR(20),
+	PRIMARY KEY (id),
+	FOREIGN KEY(video_id) REFERENCES videos (video_id)
+)

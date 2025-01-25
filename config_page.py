@@ -82,7 +82,6 @@ def config_page():
 
     tab1, tab2, tab3 = st.tabs(['👩🏻‍💻 YouTube API key', '🛢️ SQL URL', '🗃️ MongoDB URI'])
     with tab1:
-        # TODO: issue with youtube API, passed without internet connections.
         repeater_entry(paragraph_1, value_key="api_key", constructor="youTube_API")
         status_banner(value_key="api_key", constructor="youTube_API")
 

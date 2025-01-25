@@ -1,7 +1,15 @@
 import pandas as pd
 from sqlalchemy import create_engine, text
+from dotenv import load_dotenv
+from os import getenv
 
-engine = create_engine("mysql+pymysql://guvi_user:1king#lanka@localhost:3306/youtube_local")
+load_dotenv('../../.secrets')
+
+pre_conn = getenv('pre_conn')
+schema_name = getenv('DB_NAME')
+connection_string = f'{pre_conn}{schema_name}'
+
+engine = create_engine(connection_string)
 
 
 def get_query(query):

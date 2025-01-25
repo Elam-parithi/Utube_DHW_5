@@ -3,11 +3,14 @@
 # This module only extract the YouTube data and present it as GUVI formated json file.
 # Additionally, it has a function to check api keys.
 
+import os, json
+import logging
 import requests
 from re import compile
+from datetime import datetime
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-import logging
+from config_and_auxiliary import directory_settings
 
 logging.basicConfig(encoding='utf-8')
 logger = logging.getLogger('Youtube_Extractor')
@@ -37,6 +40,21 @@ def check_youtube_api_key(api_key: str):
     except Exception as e:
         print("An unexpected error occurred:", e)
         return False
+
+
+def save_dict_to_json(channel_data_e, filename_for_json):
+    """
+    function for converting Dictionary to Json filename.
+    @param channel_data_e: Data Dictionary
+    @param filename_for_json: JSON file name
+    @return:  for JSON
+    """
+    directory_path = directory_settings['extracted json folder']
+    json_filename = f"{filename_for_json}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
+    file_pathlib = os.path.join(directory_path, json_filename)
+    with open(file_pathlib, "w") as extractfile:
+        json.dump(channel_data_e, extractfile, indent=4)
+    return file_pathlib
 
 
 def check_api_key(function_api_key):
@@ -336,12 +354,20 @@ class YouTubeDataExtractor:
 
 
 if __name__ == "__main__":
-    yt = YouTubeDataExtractor('AIzaSyCS-NnHQKO65o2RYWejYSbE_PFSWucU1z0')
-    cid = yt.get_channel_id(channel_name='madras foodie')
-    dt = yt.guvi_format(cid)
-    import json
+    from dotenv import load_dotenv
+    from os import getenv
+    load_dotenv('.secrets')
+    youtube_api_key = getenv('youtube_api_key')
+    print(youtube_api_key)
 
-    file_path = r'extracted_data/madras_foodie.json'
-    with open(file_path, 'w') as file:
-        json.dump(dt, file, indent=4)  # The indent argument is optional, it just makes the output more readable
-    print("Program was completed.")
+    yt = YouTubeDataExtractor(youtube_api_key)
+
+    channel_list = ['madras foodie', 'GUVI', 'TheRegent', 'Chennaiipl', 'Behindwoods', 'ishitanifurnutires']
+
+    for channel_nm in channel_list:
+        print(f"Extraction started for {channel_nm}")
+        cid = yt.get_channel_id(channel_name=channel_nm)
+        dt = yt.guvi_format(cid)
+        save_path = save_dict_to_json(dt, channel_nm)
+        print(f"Completed for {channel_nm} @ {save_path}")
+

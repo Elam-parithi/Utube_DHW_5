@@ -5,24 +5,13 @@
 # which is called in extractor_app.py
 
 
-import os
-import json
 import streamlit as st
-from datetime import datetime
 from streamlit_tags import st_tags
 from googleapiclient.errors import HttpError
 from httplib2 import ServerNotFoundError
-from config_and_auxiliary import yt, basic_settings, d_channel, custom_annotation, directory_settings
-
-directory_path = directory_settings['extracted json folder']
-
-
-def save_dict_to_json(channel_data_e, item):
-    json_filename = f"{item}-{datetime.now().strftime('%Y%m%d-%H%M%S')}.json"
-    file_path = os.path.join(directory_path, json_filename)
-    with open(file_path, "w") as extractfile:
-        json.dump(channel_data_e, extractfile, indent=4)
-    return file_path
+import youtube_extractor as yt
+from config_and_auxiliary import basic_settings, d_channel, custom_annotation
+from youtube_extractor import save_dict_to_json
 
 
 @st.dialog("Youtube API Quota Exceeded.", width="large")
@@ -47,7 +36,7 @@ def home_page():
     """
     This is the Home page where you enter channel name/ID and get details.
     """
-    st.subheader("Home")
+    st.subheader("🏠 Home")
     st.write("select channels that are small. If you select bigger channels they take more time to "
              "extract, upload to MySQL, Sentiment Analysis.")
     with st.form(key="ChannelID_names", clear_on_submit=False):

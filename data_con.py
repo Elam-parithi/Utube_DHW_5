@@ -7,6 +7,7 @@ import re
 import json
 import write_3
 import pandas as pd
+from pathlib import Path
 import streamlit as st
 from sqlalchemy import text
 from dotenv import load_dotenv
@@ -79,6 +80,9 @@ class sql_tube:
         for file in filepath:
             full_path = os.path.join(extracted_dir, file)
             filename = os.path.basename(full_path)
+            full_path = str(Path(full_path).with_suffix(".json"))
+            print(full_path)
+
             with open(full_path, 'r') as file_data:
                 print(f'processing {filename}...')
                 data = json.load(file_data)

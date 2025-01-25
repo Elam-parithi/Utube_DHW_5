@@ -36,7 +36,7 @@ def create_download_buttons(filepaths):
 
 def Data_storage_tab():
     # Data_storage_processing. processing the data in streamlit.
-    st.header("Storage processing:")
+    st.header("🛢 Storage processing:")
     # default attribute, change to none
     st.divider()
     with st.container():
@@ -76,6 +76,6 @@ def Data_storage_tab():
         if storage_mon:
             if st.session_state["MongoDB_URI"].is_connected:
                 st.session_state["MongoDB_URI"].JSON_2_mongo(JSON_filename=json_file, DB_name=db_name,
-                                                             collection=collection_name)
+                                                             collection= collection_name)
                 st.session_state["MongoDB_URI"].close_mongo()
             st.write("Data writen to MongoDB URI")

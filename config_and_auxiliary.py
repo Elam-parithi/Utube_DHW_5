@@ -1,11 +1,12 @@
 # Your Credentials your responsibility.
 
 import json
-import random, os
+import os
+import random
 import string
-import streamlit as st
 from pathlib import Path
-import youtube_extractor as yt
+
+import streamlit as st
 from annotated_text import annotated_text
 
 """
@@ -23,17 +24,17 @@ But your can add it at the time of execution in UI.
 # sqlite:///Database_storage/Utube_DHW-5.db  # SQLite
 
 directory_settings = {
-    'extracted json folder' : r'./extracted_data',
-    'Debug logs folder' : r'./logs',
+    'extracted json folder':'extracted_data',
+    'Debug logs folder':'logs',
 }
 
-basic_settings={
-    'default_index': 0,
-    "image_path" : r"Icons/sunflower.png",
-    "MAX_CHANNELS" : 10
+basic_settings = {
+    'default_index':0,
+    "image_path":r"Icons/sunflower.png",
+    "MAX_CHANNELS":10
 }
 
-#tutorial at bannanatree timeline: 3:36
+# tutorial at bannanatree timeline: 3:36
 css_file = r"styles/main.css"
 
 light_colors = [
@@ -60,11 +61,12 @@ light_colors = [
 ]
 
 log_location = {
-    "api" : r"logs/API_log",
-    "app" : r"logs/application_log",
-    "exr" : r"logs/extraction_log",
-    "oth" : r"logs/others"
+    "api":r"logs/API_log",
+    "app":r"logs/application_log",
+    "exr":r"logs/extraction_log",
+    "oth":r"logs/others"
 }
+
 
 def locate_log(short_code: str, filename: str):
     """
@@ -75,8 +77,8 @@ def locate_log(short_code: str, filename: str):
     @return: filepath with filename
     """
     if short_code not in log_location.keys():
-        return os.path.join(r'logs',filename)
-    file_path = os.path.join(log_location[short_code],filename)
+        return os.path.join(r'logs', filename)
+    file_path = os.path.join(log_location[short_code], filename)
     os.makedirs(os.path.dirname(file_path), exist_ok=True)
     return file_path
 
@@ -103,11 +105,11 @@ def custom_annotation(t_list: list):
     my_list = []
     colors = []
     for count, item in enumerate(t_list):
-        if count != (len(t_list)-1):
+        if count != (len(t_list) - 1):
             e_str = " , "
         else:
             e_str = " "
-        f_str = list(("  ", (item, '', pick_random_color(colors)), e_str)) # str(count+1)
+        f_str = list(("  ", (item, '', pick_random_color(colors)), e_str))  # str(count+1)
         my_list.append(f_str)
     annotated_text(my_list)
 
@@ -185,7 +187,7 @@ if not database_URI:
 
 # Streamlit session state initialization
 configurations = {
-    "first_run": True,
+    "first_run":True,
     # values
     "api_key":API_key,
     "mysql_config":database_URI,
@@ -197,20 +199,18 @@ configurations = {
     # others
     "file_lists":None,
     "json_result":None,
-    "Selected_files": None,
+    "Selected_files":None,
 }
 
 for key, value in configurations.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
-
-folder_path =[ r'./extracted_data',
-               r'./logs',
-               r'./Database_storage' ]
+folder_path = [r'./extracted_data',
+               r'./logs']
 
 for folder_name_str in folder_path:
-    folder_name=Path(folder_name_str)
+    folder_name = Path(folder_name_str)
     if not folder_name.exists():
         folder_name.mkdir(parents=True, exist_ok=True)
         print(f"Folder '{folder_name}' created successfully.")

@@ -2153,3 +2153,1392 @@ CREATE TABLE comments (
 2025-01-13 22:50:20,595 - Youtube_Extractor - INFO - There is no comments in this videoQhp7HL0o6qY = NEIDHAL TREDITIONAL MUD POT SEA FOOD RESTAURANT, comment count 0
 2025-01-13 22:54:42,839 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "quotaExceeded"
 2025-01-13 22:54:43,833 - googleapiclient.http - WARNING - Encountered 403 Forbidden with reason "quotaExceeded"
+2025-01-25 06:59:19,555 - create_db - INFO - connection string separated
+2025-01-25 06:59:19,556 - create_db - INFO - Connection URL: mysql+pymysql://elamparithi:ubuntu123umbrella@mysqlserver.local:3306
+2025-01-25 06:59:19,557 - create_db - INFO - Connection Schema: youtube_local
+2025-01-25 06:59:19,948 - create_db - INFO - Schema 'youtube_local' already exists, skipping creation.
+2025-01-25 06:59:19,962 - create_db - INFO - Connection closed.
+2025-01-25 06:59:20,018 - sqlalchemy.engine.Engine - INFO - SELECT DATABASE()
+2025-01-25 06:59:20,018 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 06:59:20,023 - sqlalchemy.engine.Engine - INFO - SELECT @@sql_mode
+2025-01-25 06:59:20,023 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 06:59:20,025 - sqlalchemy.engine.Engine - INFO - SELECT @@lower_case_table_names
+2025-01-25 06:59:20,026 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 06:59:20,039 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 06:59:20,040 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`channels`
+2025-01-25 06:59:20,040 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 06:59:20,069 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`playlists`
+2025-01-25 06:59:20,069 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 06:59:20,074 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`videos`
+2025-01-25 06:59:20,075 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 06:59:20,092 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`comments`
+2025-01-25 06:59:20,092 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 06:59:20,097 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-01-25 06:59:20,104 - create_db - INFO - all Tables created.
+2025-01-25 06:59:24,155 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 06:59:24,155 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 06:59:24,156 - sqlalchemy.engine.Engine - INFO - [generated in 0.00105s] {}
+2025-01-25 06:59:25,233 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 06:59:26,046 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 06:59:26,047 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 06:59:26,047 - sqlalchemy.engine.Engine - INFO - [generated in 0.00140s] {}
+2025-01-25 06:59:27,379 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 06:59:30,624 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 06:59:30,625 - sqlalchemy.engine.Engine - INFO - SELECT 
+        p.channel_id,
+        p.playlist_name,
+        AVG(cm.sentiment) AS average_sentiment
+    FROM playlists p
+    JOIN videos v ON p.playlist_id = v.playlist_id
+    JOIN comments cm ON v.video_id = cm.video_id
+    WHERE 
+        p.playlist_id IN (
+            SELECT p1.playlist_id
+            FROM playlists p1
+            JOIN videos v1 ON p1.playlist_id = v1.playlist_id
+            GROUP BY p1.playlist_id
+            ORDER BY SUM(v1.view_count) DESC LIMIT 1
+        )
+    GROUP BY p.channel_id, p.playlist_name;
+2025-01-25 06:59:30,626 - sqlalchemy.engine.Engine - INFO - [generated in 0.00179s] {}
+2025-01-25 06:59:30,630 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:00:58,275 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:00:58,276 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:00:58,276 - sqlalchemy.engine.Engine - INFO - [cached since 94.12s ago] {}
+2025-01-25 07:00:59,272 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:00:59,926 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:00:59,926 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:00:59,927 - sqlalchemy.engine.Engine - INFO - [cached since 93.88s ago] {}
+2025-01-25 07:01:01,375 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:01:05,027 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:01:05,028 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_title, v.views, v.likes, COUNT(c.comment_id) AS 'Comment Count'
+    FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_title, v.views, v.likes
+    ORDER BY v.views DESC;
+    
+2025-01-25 07:01:05,030 - sqlalchemy.engine.Engine - INFO - [generated in 0.00240s] {}
+2025-01-25 07:01:05,034 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:01:05,038 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:01:05,038 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:01:05,039 - sqlalchemy.engine.Engine - INFO - [generated in 0.00150s] {}
+2025-01-25 07:01:13,897 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:01:56,325 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:01:56,326 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:01:56,328 - sqlalchemy.engine.Engine - INFO - [cached since 152.2s ago] {}
+2025-01-25 07:01:57,320 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:01:58,074 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:01:58,076 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:01:58,076 - sqlalchemy.engine.Engine - INFO - [cached since 152s ago] {}
+2025-01-25 07:01:59,289 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:02:02,389 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:02:02,390 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:02:02,391 - sqlalchemy.engine.Engine - INFO - [cached since 57.35s ago] {}
+2025-01-25 07:02:09,481 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:03:17,380 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:03:17,381 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:03:17,382 - sqlalchemy.engine.Engine - INFO - [cached since 233.2s ago] {}
+2025-01-25 07:03:18,386 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:03:19,196 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:03:19,196 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:03:19,197 - sqlalchemy.engine.Engine - INFO - [cached since 233.2s ago] {}
+2025-01-25 07:03:20,565 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:03:24,349 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:03:24,351 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:03:24,351 - sqlalchemy.engine.Engine - INFO - [cached since 139.3s ago] {}
+2025-01-25 07:03:33,385 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:05:26,672 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:05:26,674 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:05:26,676 - sqlalchemy.engine.Engine - INFO - [cached since 362.5s ago] {}
+2025-01-25 07:05:27,672 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:05:28,246 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:05:28,246 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:05:28,247 - sqlalchemy.engine.Engine - INFO - [cached since 362.2s ago] {}
+2025-01-25 07:05:29,565 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:05:33,638 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:05:33,639 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:05:33,640 - sqlalchemy.engine.Engine - INFO - [cached since 268.6s ago] {}
+2025-01-25 07:05:41,662 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:09:10,848 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:09:10,850 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:09:10,851 - sqlalchemy.engine.Engine - INFO - [cached since 586.7s ago] {}
+2025-01-25 07:09:11,846 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:09:12,785 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:09:12,787 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:09:12,789 - sqlalchemy.engine.Engine - INFO - [cached since 586.7s ago] {}
+2025-01-25 07:09:14,069 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:09:17,261 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:09:17,262 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:09:17,263 - sqlalchemy.engine.Engine - INFO - [cached since 492.2s ago] {}
+2025-01-25 07:09:25,267 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:38:46,431 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:38:46,433 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:38:46,434 - sqlalchemy.engine.Engine - INFO - [cached since 2362s ago] {}
+2025-01-25 07:38:47,432 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:38:48,592 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:38:48,592 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:38:48,593 - sqlalchemy.engine.Engine - INFO - [cached since 2363s ago] {}
+2025-01-25 07:38:49,820 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:38:53,420 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:38:53,421 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 07:38:53,422 - sqlalchemy.engine.Engine - INFO - [generated in 0.00180s] {}
+2025-01-25 07:38:54,185 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:38:54,767 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:38:54,767 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:38:54,768 - sqlalchemy.engine.Engine - INFO - [cached since 2270s ago] {}
+2025-01-25 07:39:02,618 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:39:57,883 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:39:57,888 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:39:57,889 - sqlalchemy.engine.Engine - INFO - [cached since 2434s ago] {}
+2025-01-25 07:39:58,918 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:39:59,582 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:39:59,583 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:39:59,583 - sqlalchemy.engine.Engine - INFO - [cached since 2434s ago] {}
+2025-01-25 07:40:00,795 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:40:04,588 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:40:04,589 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 07:40:04,590 - sqlalchemy.engine.Engine - INFO - [cached since 71.17s ago] {}
+2025-01-25 07:40:05,355 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:40:07,531 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:40:07,532 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:40:07,532 - sqlalchemy.engine.Engine - INFO - [cached since 2342s ago] {}
+2025-01-25 07:40:16,563 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:43:03,032 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:43:03,032 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:43:03,033 - sqlalchemy.engine.Engine - INFO - [cached since 2619s ago] {}
+2025-01-25 07:43:04,075 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:43:05,008 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:43:05,009 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:43:05,010 - sqlalchemy.engine.Engine - INFO - [cached since 2619s ago] {}
+2025-01-25 07:43:06,221 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:43:10,151 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:43:10,152 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 07:43:10,153 - sqlalchemy.engine.Engine - INFO - [cached since 256.7s ago] {}
+2025-01-25 07:43:11,083 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:43:13,909 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:43:13,912 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:43:13,913 - sqlalchemy.engine.Engine - INFO - [cached since 2529s ago] {}
+2025-01-25 07:43:23,012 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:44:21,659 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:44:21,662 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:44:21,663 - sqlalchemy.engine.Engine - INFO - [cached since 2698s ago] {}
+2025-01-25 07:44:22,664 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:44:25,245 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:44:25,246 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:44:25,246 - sqlalchemy.engine.Engine - INFO - [cached since 2699s ago] {}
+2025-01-25 07:44:26,751 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:44:30,328 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:44:30,330 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 07:44:30,330 - sqlalchemy.engine.Engine - INFO - [cached since 336.9s ago] {}
+2025-01-25 07:44:31,260 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:44:37,593 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:44:37,596 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:44:37,597 - sqlalchemy.engine.Engine - INFO - [cached since 2613s ago] {}
+2025-01-25 07:44:47,017 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:46:42,610 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:46:42,611 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:46:42,611 - sqlalchemy.engine.Engine - INFO - [cached since 2838s ago] {}
+2025-01-25 07:46:43,579 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:46:44,410 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:46:44,411 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:46:44,411 - sqlalchemy.engine.Engine - INFO - [cached since 2838s ago] {}
+2025-01-25 07:46:45,627 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:46:52,118 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:46:52,119 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 07:46:52,119 - sqlalchemy.engine.Engine - INFO - [cached since 478.7s ago] {}
+2025-01-25 07:46:53,052 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:46:55,521 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:46:55,522 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:46:55,523 - sqlalchemy.engine.Engine - INFO - [cached since 2750s ago] {}
+2025-01-25 07:47:10,254 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:49:49,128 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:49:49,129 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 07:49:49,129 - sqlalchemy.engine.Engine - INFO - [cached since 3025s ago] {}
+2025-01-25 07:49:50,126 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:49:52,184 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:49:52,188 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 07:49:52,188 - sqlalchemy.engine.Engine - INFO - [cached since 3026s ago] {}
+2025-01-25 07:49:53,685 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:49:58,522 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:49:58,522 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 07:49:58,523 - sqlalchemy.engine.Engine - INFO - [cached since 665.1s ago] {}
+2025-01-25 07:49:59,456 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 07:50:02,705 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 07:50:02,706 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 07:50:02,706 - sqlalchemy.engine.Engine - INFO - [cached since 2938s ago] {}
+2025-01-25 07:50:10,381 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:04:54,424 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:04:54,424 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:04:54,425 - sqlalchemy.engine.Engine - INFO - [cached since 3930s ago] {}
+2025-01-25 08:04:55,421 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:04:56,242 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:04:56,243 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 08:04:56,243 - sqlalchemy.engine.Engine - INFO - [cached since 3930s ago] {}
+2025-01-25 08:04:57,447 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:05:01,185 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:05:01,186 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 08:05:01,187 - sqlalchemy.engine.Engine - INFO - [cached since 1568s ago] {}
+2025-01-25 08:05:01,944 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:05:03,875 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:05:03,877 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 08:05:03,878 - sqlalchemy.engine.Engine - INFO - [cached since 3839s ago] {}
+2025-01-25 08:05:12,985 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:25:27,032 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:25:27,033 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:25:27,033 - sqlalchemy.engine.Engine - INFO - [cached since 5163s ago] {}
+2025-01-25 08:25:28,040 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:25:28,917 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:25:28,918 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 08:25:28,919 - sqlalchemy.engine.Engine - INFO - [cached since 5163s ago] {}
+2025-01-25 08:25:30,128 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:25:36,596 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:25:36,597 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 08:25:36,597 - sqlalchemy.engine.Engine - INFO - [cached since 2803s ago] {}
+2025-01-25 08:25:37,353 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:25:42,128 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:25:42,132 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 08:25:42,132 - sqlalchemy.engine.Engine - INFO - [cached since 5077s ago] {}
+2025-01-25 08:25:57,062 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:26:31,246 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:26:31,246 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:26:31,247 - sqlalchemy.engine.Engine - INFO - [cached since 5227s ago] {}
+2025-01-25 08:26:32,218 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:26:34,178 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:26:34,179 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 08:26:34,180 - sqlalchemy.engine.Engine - INFO - [cached since 5228s ago] {}
+2025-01-25 08:26:35,389 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:26:48,488 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:26:48,496 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 08:26:48,496 - sqlalchemy.engine.Engine - INFO - [cached since 2875s ago] {}
+2025-01-25 08:26:49,253 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:26:57,250 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:26:57,251 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 08:26:57,252 - sqlalchemy.engine.Engine - INFO - [cached since 5152s ago] {}
+2025-01-25 08:27:08,342 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:28:46,909 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:28:46,910 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:28:46,911 - sqlalchemy.engine.Engine - INFO - [cached since 5363s ago] {}
+2025-01-25 08:28:47,878 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:28:49,691 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:28:49,692 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 08:28:49,692 - sqlalchemy.engine.Engine - INFO - [cached since 5364s ago] {}
+2025-01-25 08:28:50,896 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:29:04,445 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:29:04,446 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 08:29:04,447 - sqlalchemy.engine.Engine - INFO - [cached since 3011s ago] {}
+2025-01-25 08:29:05,229 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:29:12,688 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:29:12,690 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 08:29:12,692 - sqlalchemy.engine.Engine - INFO - [cached since 5288s ago] {}
+2025-01-25 08:29:25,797 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:32:32,116 - create_db - INFO - connection string separated
+2025-01-25 08:32:32,116 - create_db - INFO - Connection URL: mysql+pymysql://guvi_user:1king#lanka@localhost:3306
+2025-01-25 08:32:32,116 - create_db - INFO - Connection Schema: youtube_local
+2025-01-25 08:32:32,306 - create_db - INFO - Schema 'youtube_local' already exists, skipping creation.
+2025-01-25 08:32:32,308 - create_db - INFO - Connection closed.
+2025-01-25 08:32:32,328 - sqlalchemy.engine.Engine - INFO - SELECT DATABASE()
+2025-01-25 08:32:32,328 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 08:32:32,332 - sqlalchemy.engine.Engine - INFO - SELECT @@sql_mode
+2025-01-25 08:32:32,333 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 08:32:32,334 - sqlalchemy.engine.Engine - INFO - SELECT @@lower_case_table_names
+2025-01-25 08:32:32,335 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 08:32:32,338 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:32:32,339 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`channels`
+2025-01-25 08:32:32,339 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 08:32:32,400 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`playlists`
+2025-01-25 08:32:32,401 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 08:32:32,407 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`videos`
+2025-01-25 08:32:32,407 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 08:32:32,412 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`comments`
+2025-01-25 08:32:32,412 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 08:32:32,417 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-01-25 08:32:32,421 - create_db - INFO - all Tables created.
+2025-01-25 08:32:38,006 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:32:38,006 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:32:38,011 - sqlalchemy.engine.Engine - INFO - [generated in 0.00560s] {}
+2025-01-25 08:32:40,947 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:32:41,901 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:32:41,902 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 08:32:41,902 - sqlalchemy.engine.Engine - INFO - [generated in 0.00187s] {}
+2025-01-25 08:32:47,605 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:32:52,154 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:32:52,155 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 08:32:52,156 - sqlalchemy.engine.Engine - INFO - [generated in 0.00165s] {}
+2025-01-25 08:32:56,242 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:32:59,648 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:32:59,649 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 08:32:59,650 - sqlalchemy.engine.Engine - INFO - [generated in 0.00181s] {}
+2025-01-25 08:33:12,333 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:34:24,069 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:34:24,071 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:34:24,071 - sqlalchemy.engine.Engine - INFO - [cached since 106.1s ago] {}
+2025-01-25 08:34:27,160 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:34:28,274 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:34:28,274 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 08:34:28,275 - sqlalchemy.engine.Engine - INFO - [cached since 106.4s ago] {}
+2025-01-25 08:34:33,198 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:34:43,130 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:34:43,131 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 08:34:43,132 - sqlalchemy.engine.Engine - INFO - [cached since 111s ago] {}
+2025-01-25 08:34:49,341 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:34:53,951 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:34:53,952 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 08:34:53,952 - sqlalchemy.engine.Engine - INFO - [cached since 114.3s ago] {}
+2025-01-25 08:35:06,989 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:37:20,775 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:37:20,776 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:37:20,777 - sqlalchemy.engine.Engine - INFO - [cached since 282.8s ago] {}
+2025-01-25 08:37:23,476 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:37:24,979 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:37:24,980 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 08:37:24,985 - sqlalchemy.engine.Engine - INFO - [cached since 283.1s ago] {}
+2025-01-25 08:37:29,218 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:37:36,857 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:37:36,858 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 08:37:36,858 - sqlalchemy.engine.Engine - INFO - [cached since 284.7s ago] {}
+2025-01-25 08:37:40,806 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:37:43,999 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:37:44,000 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 08:37:44,001 - sqlalchemy.engine.Engine - INFO - [cached since 284.4s ago] {}
+2025-01-25 08:37:58,507 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:49:29,251 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:49:29,251 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:49:29,255 - sqlalchemy.engine.Engine - INFO - [cached since 1011s ago] {}
+2025-01-25 08:49:31,328 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:51:08,196 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:51:08,197 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:51:08,197 - sqlalchemy.engine.Engine - INFO - [cached since 1110s ago] {}
+2025-01-25 08:51:10,767 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:57:55,620 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:57:55,621 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:57:55,621 - sqlalchemy.engine.Engine - INFO - [cached since 1518s ago] {}
+2025-01-25 08:57:57,880 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 08:58:51,411 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 08:58:51,412 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 08:58:51,412 - sqlalchemy.engine.Engine - INFO - [cached since 1573s ago] {}
+2025-01-25 08:58:54,957 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:06:01,089 - create_db - INFO - connection string separated
+2025-01-25 22:06:01,089 - create_db - INFO - Connection URL: mysql+pymysql://guvi_user:1king#lanka@localhost:3306
+2025-01-25 22:06:01,090 - create_db - INFO - Connection Schema: youtube_local
+2025-01-25 22:06:01,474 - create_db - INFO - Schema 'youtube_local' already exists, skipping creation.
+2025-01-25 22:06:01,476 - create_db - INFO - Connection closed.
+2025-01-25 22:06:01,491 - sqlalchemy.engine.Engine - INFO - SELECT DATABASE()
+2025-01-25 22:06:01,492 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 22:06:01,494 - sqlalchemy.engine.Engine - INFO - SELECT @@sql_mode
+2025-01-25 22:06:01,495 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 22:06:01,496 - sqlalchemy.engine.Engine - INFO - SELECT @@lower_case_table_names
+2025-01-25 22:06:01,496 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 22:06:01,499 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:06:01,499 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`channels`
+2025-01-25 22:06:01,499 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 22:06:01,626 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`playlists`
+2025-01-25 22:06:01,627 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 22:06:01,636 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`videos`
+2025-01-25 22:06:01,637 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 22:06:01,644 - sqlalchemy.engine.Engine - INFO - DESCRIBE `youtube_local`.`comments`
+2025-01-25 22:06:01,645 - sqlalchemy.engine.Engine - INFO - [raw sql] {}
+2025-01-25 22:06:01,678 - sqlalchemy.engine.Engine - INFO - COMMIT
+2025-01-25 22:06:01,684 - create_db - INFO - all Tables created.
+2025-01-25 22:06:12,653 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:06:12,655 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:06:12,655 - sqlalchemy.engine.Engine - INFO - [generated in 0.00210s] {}
+2025-01-25 22:06:15,232 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:06:35,320 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:06:35,331 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:06:35,332 - sqlalchemy.engine.Engine - INFO - [cached since 22.68s ago] {}
+2025-01-25 22:06:39,033 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:06:39,749 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:06:39,750 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:06:39,750 - sqlalchemy.engine.Engine - INFO - [generated in 0.00107s] {}
+2025-01-25 22:06:43,190 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:06:46,935 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:06:46,936 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:06:46,938 - sqlalchemy.engine.Engine - INFO - [generated in 0.00345s] {}
+2025-01-25 22:06:49,377 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:06:51,373 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:06:51,374 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:06:51,374 - sqlalchemy.engine.Engine - INFO - [generated in 0.00129s] {}
+2025-01-25 22:07:02,756 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:08:36,778 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:08:36,779 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:08:36,780 - sqlalchemy.engine.Engine - INFO - [cached since 144.1s ago] {}
+2025-01-25 22:08:38,988 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:08:39,627 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:08:39,628 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:08:39,628 - sqlalchemy.engine.Engine - INFO - [cached since 119.9s ago] {}
+2025-01-25 22:08:42,547 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:08:46,203 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:08:46,205 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:08:46,206 - sqlalchemy.engine.Engine - INFO - [cached since 119.3s ago] {}
+2025-01-25 22:08:48,156 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:08:51,110 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:08:51,111 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:08:51,111 - sqlalchemy.engine.Engine - INFO - [cached since 119.7s ago] {}
+2025-01-25 22:08:59,842 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:10:57,773 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:10:57,773 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:10:57,774 - sqlalchemy.engine.Engine - INFO - [cached since 285.1s ago] {}
+2025-01-25 22:11:01,235 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:11:02,067 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:11:02,068 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:11:02,069 - sqlalchemy.engine.Engine - INFO - [cached since 262.3s ago] {}
+2025-01-25 22:11:06,102 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:11:13,753 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:11:13,753 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:11:13,753 - sqlalchemy.engine.Engine - INFO - [cached since 266.8s ago] {}
+2025-01-25 22:11:17,408 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:11:19,550 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:11:19,551 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:11:19,551 - sqlalchemy.engine.Engine - INFO - [cached since 268.2s ago] {}
+2025-01-25 22:11:29,671 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:16:57,285 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:16:57,286 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:16:57,287 - sqlalchemy.engine.Engine - INFO - [cached since 644.6s ago] {}
+2025-01-25 22:16:59,746 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:17:00,621 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:17:00,622 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:17:00,623 - sqlalchemy.engine.Engine - INFO - [cached since 620.9s ago] {}
+2025-01-25 22:17:03,558 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:17:09,667 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:17:09,669 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:17:09,669 - sqlalchemy.engine.Engine - INFO - [cached since 622.7s ago] {}
+2025-01-25 22:17:13,004 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:17:15,234 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:17:15,235 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:17:15,235 - sqlalchemy.engine.Engine - INFO - [cached since 623.9s ago] {}
+2025-01-25 22:17:24,531 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:18:47,546 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:18:47,547 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:18:47,548 - sqlalchemy.engine.Engine - INFO - [cached since 754.9s ago] {}
+2025-01-25 22:18:50,054 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:18:50,886 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:18:50,887 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:18:50,888 - sqlalchemy.engine.Engine - INFO - [cached since 731.1s ago] {}
+2025-01-25 22:18:53,559 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:18:59,475 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:18:59,476 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:18:59,479 - sqlalchemy.engine.Engine - INFO - [cached since 732.5s ago] {}
+2025-01-25 22:19:04,994 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:19:07,988 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:19:07,991 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:19:07,995 - sqlalchemy.engine.Engine - INFO - [cached since 736.6s ago] {}
+2025-01-25 22:19:33,908 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:20:03,167 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:20:03,168 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:20:03,168 - sqlalchemy.engine.Engine - INFO - [cached since 830.5s ago] {}
+2025-01-25 22:20:08,278 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:20:12,537 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:20:12,538 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:20:12,538 - sqlalchemy.engine.Engine - INFO - [cached since 812.8s ago] {}
+2025-01-25 22:20:17,687 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:20:19,674 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:20:19,678 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:20:19,678 - sqlalchemy.engine.Engine - INFO - [cached since 812.7s ago] {}
+2025-01-25 22:20:23,167 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:20:28,648 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:20:28,649 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:20:28,652 - sqlalchemy.engine.Engine - INFO - [cached since 817.3s ago] {}
+2025-01-25 22:20:50,440 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:21:04,969 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:21:04,970 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:21:04,971 - sqlalchemy.engine.Engine - INFO - [cached since 892.3s ago] {}
+2025-01-25 22:21:09,302 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:21:11,536 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:21:11,537 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:21:11,537 - sqlalchemy.engine.Engine - INFO - [cached since 871.8s ago] {}
+2025-01-25 22:21:16,764 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:21:31,693 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:21:31,694 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:21:31,696 - sqlalchemy.engine.Engine - INFO - [cached since 884.8s ago] {}
+2025-01-25 22:21:36,516 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:21:40,027 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:21:40,028 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:21:40,032 - sqlalchemy.engine.Engine - INFO - [cached since 888.7s ago] {}
+2025-01-25 22:21:51,998 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:26:46,606 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:26:46,608 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 22:26:46,609 - sqlalchemy.engine.Engine - INFO - [cached since 1234s ago] {}
+2025-01-25 22:26:49,273 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:26:50,187 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:26:50,187 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 22:26:50,187 - sqlalchemy.engine.Engine - INFO - [cached since 1210s ago] {}
+2025-01-25 22:26:54,642 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:27:23,252 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:27:23,252 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 22:27:23,253 - sqlalchemy.engine.Engine - INFO - [cached since 1236s ago] {}
+2025-01-25 22:27:30,706 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 22:27:35,692 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 22:27:35,708 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 22:27:35,708 - sqlalchemy.engine.Engine - INFO - [cached since 1244s ago] {}
+2025-01-25 22:28:02,905 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:36:44,506 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:36:44,507 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 23:36:44,507 - sqlalchemy.engine.Engine - INFO - [cached since 5432s ago] {}
+2025-01-25 23:36:47,181 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:36:48,340 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:36:48,340 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 23:36:48,341 - sqlalchemy.engine.Engine - INFO - [cached since 5409s ago] {}
+2025-01-25 23:36:51,435 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:36:59,962 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:36:59,963 - sqlalchemy.engine.Engine - INFO - 
+    SELECT p.playlist_name, v.video_name, AVG(c.sentiment) AS average_sentiment
+    FROM (SELECT video_id, playlist_id, video_name,  FROM videos
+         ORDER BY view_count DESC LIMIT 5) v
+    JOIN playlists p ON v.playlist_id = p.playlist_id
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY p.playlist_name, v.video_name
+    ORDER BY v.video_name;
+    
+2025-01-25 23:36:59,963 - sqlalchemy.engine.Engine - INFO - [generated in 0.00134s] {}
+2025-01-25 23:36:59,970 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:38:04,823 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:38:04,824 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 23:38:04,828 - sqlalchemy.engine.Engine - INFO - [cached since 5512s ago] {}
+2025-01-25 23:38:07,526 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:38:08,333 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:38:08,333 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-25 23:38:08,333 - sqlalchemy.engine.Engine - INFO - [cached since 5489s ago] {}
+2025-01-25 23:38:11,309 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:38:17,309 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:38:17,310 - sqlalchemy.engine.Engine - INFO - 
+    SELECT p.playlist_name, SUM(v.view_count) AS total_view_count, AVG(c.sentiment) AS average_sentiment
+    FROM (SELECT video_id, playlist_id, view_count FROM videos
+         ORDER BY view_count DESC LIMIT 5) v
+    JOIN playlists p ON v.playlist_id = p.playlist_id
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY p.playlist_name ORDER BY total_view_count DESC;
+    
+2025-01-25 23:38:17,310 - sqlalchemy.engine.Engine - INFO - [generated in 0.00114s] {}
+2025-01-25 23:38:18,895 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:38:22,556 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:38:22,558 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-25 23:38:22,559 - sqlalchemy.engine.Engine - INFO - [cached since 5496s ago] {}
+2025-01-25 23:38:24,914 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:38:27,833 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:38:27,833 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-25 23:38:27,834 - sqlalchemy.engine.Engine - INFO - [cached since 5496s ago] {}
+2025-01-25 23:38:38,195 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-25 23:43:12,946 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-25 23:43:12,946 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-25 23:43:12,947 - sqlalchemy.engine.Engine - INFO - [cached since 5820s ago] {}
+2025-01-25 23:43:17,339 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-26 00:13:47,274 - ipykernel.comm - ERROR - No such comm target registered: jupyter.widget.control
+2025-01-26 00:13:47,309 - Comm - WARNING - No such comm: 2edba50b-b6f6-40da-a794-0ca6c44d7841
+2025-01-26 00:50:43,889 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-26 00:50:43,891 - sqlalchemy.engine.Engine - INFO - 
+    SELECT c.channel_name, 
+       c.channel_views AS 'Channel Views',
+       COUNT(DISTINCT v.video_id) AS 'Video Count', 
+       COUNT(DISTINCT p.playlist_id) AS 'Playlist Count'
+    FROM channels c
+    LEFT JOIN playlists p ON c.channel_id = p.channel_id
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    GROUP BY c.channel_name, c.channel_views;
+2025-01-26 00:50:43,892 - sqlalchemy.engine.Engine - INFO - [cached since 9871s ago] {}
+2025-01-26 00:50:46,505 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-26 00:50:47,863 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-26 00:50:47,864 - sqlalchemy.engine.Engine - INFO - SELECT 
+        c.channel_name,
+        AVG(v.duration) AS 'Average duration',
+        SUM(v.duration) AS 'Total duration',
+        COUNT(com.comment_id) AS 'Total comments'
+    FROM channels c
+    LEFT JOIN videos v ON c.channel_id = v.channel_id
+    LEFT JOIN comments com ON v.video_id = com.video_id
+    GROUP BY c.channel_id, c.channel_name
+    ORDER BY 'Average duration' DESC, 'Total duration' DESC, 'Total comments' DESC;
+2025-01-26 00:50:47,864 - sqlalchemy.engine.Engine - INFO - [cached since 9848s ago] {}
+2025-01-26 00:50:50,809 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-26 00:50:56,593 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-26 00:50:56,594 - sqlalchemy.engine.Engine - INFO - 
+    SELECT p.playlist_name, SUM(v.view_count) AS total_view_count, AVG(c.sentiment) AS average_sentiment
+    FROM (SELECT video_id, playlist_id, view_count FROM videos
+         ORDER BY view_count DESC LIMIT 5) v
+    JOIN playlists p ON v.playlist_id = p.playlist_id
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY p.playlist_name ORDER BY total_view_count DESC;
+    
+2025-01-26 00:50:56,594 - sqlalchemy.engine.Engine - INFO - [cached since 4359s ago] {}
+2025-01-26 00:50:57,902 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-26 00:51:04,399 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-26 00:51:04,400 - sqlalchemy.engine.Engine - INFO - 
+    SELECT v.video_id, v.video_name, v.view_count, AVG(c.sentiment) AS average_sentiment FROM videos v
+    LEFT JOIN comments c ON v.video_id = c.video_id
+    GROUP BY v.video_id ORDER BY v.view_count DESC LIMIT 5;
+    
+2025-01-26 00:51:04,400 - sqlalchemy.engine.Engine - INFO - [cached since 9857s ago] {}
+2025-01-26 00:51:09,362 - sqlalchemy.engine.Engine - INFO - ROLLBACK
+2025-01-26 00:51:15,813 - sqlalchemy.engine.Engine - INFO - BEGIN (implicit)
+2025-01-26 00:51:15,816 - sqlalchemy.engine.Engine - INFO - 
+        SELECT c.channel_name, cm.sentiment FROM channels c
+        JOIN videos v ON c.channel_id = v.channel_id
+        JOIN comments cm ON v.video_id = cm.video_id
+        ORDER BY c.channel_name, cm.sentiment;
+        
+2025-01-26 00:51:15,817 - sqlalchemy.engine.Engine - INFO - [cached since 9864s ago] {}
+2025-01-26 00:51:29,539 - sqlalchemy.engine.Engine - INFO - ROLLBACK

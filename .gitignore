@@ -11,7 +11,7 @@ alchemy_process/Scrap_codes/
 
 .streamlit/secrets.toml
 jupyter_notes/.secret_keys_secure.json
-./.secrets
+.secrets
 .idea
 pyvenv.cfg
 

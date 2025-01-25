@@ -47,6 +47,7 @@ def plotting_bar(fig_point, x_label, y_label, dataframe):
 
 
 def analyze_page():
+    st.write("Multiple plots can be included in the project. But limited to few charts only.")
     st.subheader("Channel-wise Analysis")
 
     query = """

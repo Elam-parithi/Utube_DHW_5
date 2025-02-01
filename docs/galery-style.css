@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    text-align: center;
+    margin: 20px;
+}
+h1 {
+    border-bottom: 2px solid #ff0000;
+    padding-bottom: 0.5rem;
+}
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columns */
+    gap: 15px;
+    max-width: 900px; /* Adjust width to fit 3 columns */
+    margin: 0 auto; /* Centering the grid */
+    justify-content: center;
+    align-items: center;
+}
+
+.item {
+    background: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+.item img {
+    width: 100%; /* Ensure image fits container */
+    height: auto;
+    border-radius: 5px;
+    display: block; /* Prevent extra spacing */
+}
+
+.caption {
+    font-size: 16px;
+    margin-top: 5px;
+    color: #333;
+}

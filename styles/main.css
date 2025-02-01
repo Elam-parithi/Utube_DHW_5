@@ -6,22 +6,49 @@ From Bannanatree tutorial.
 
 * {font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;}
 
+body {
+    font-family: Arial, sans-serif;
+    margin: 40px;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
 a {
     text-decoration: none;
     font-weight: 500;
+    color: #007bff;
 }
 
 a:hover {
     color: #f94e4e !important;
-    text-decoration: none;
+    text-decoration: underline;
 }
+
 
 #MainMenu {visibility: hidden;}
 header{visibility: hidden;}
 footer{visibility: hidden;}
 
 
-h1{
-    color: red;
+h1, h2{
+    color: #26bcf2;
     font-family: consolas;
+}
+
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+li {
+    margin: 10px 0;
+}
+
+.section {
+    margin-bottom: 20px;
 }

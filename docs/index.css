@@ -8,7 +8,7 @@ body {
 }
 
 header {
-    background-color: #ff0000;
+    background-color: #ffa6009c;
     color: #fff;
     padding: 1rem 0;
     text-align: center;
@@ -41,6 +41,14 @@ section {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+img {
+    max-width: 750px;
+    border-radius: 10px; /* Optional: Rounded corners */
+    display: block;
+    margin: 0 auto;
+    border: 2px solid black; 
 }
 
 h2 {

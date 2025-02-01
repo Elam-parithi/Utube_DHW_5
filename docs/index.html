@@ -13,6 +13,8 @@
             <ul>
                 <li><a href="#about">About</a></li>
                 <li><a href="#features">Features</a></li>
+                <li><a href="#app-Summary">Summary</a></li>
+                <li><a href="galery.html">Gallery</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
@@ -20,27 +22,124 @@
     
     <section id="about">
         <h2>About the Project</h2>
-        <p>This project focuses on harvesting and analyzing YouTube data. It provides insights into video metrics, comments, and channel performance.</p>
+        <p>
+            This product was writen by <a href="https://www.linkedin.com/in/elamparithi-t">Elamparithi</a>.
+            This project focuses on Harvesting and Analyzing YouTube data with Google YouTube API module, MySQL DB, Mongo DB. 
+            Aditionaly, Here were are using <b>sentiment Analaysis on comments</b>. 
+            It provides insights into Channel Playlists ,videos, comments and its sentiment using NLTK.
+        </p>
+        <p>
+            Github project was available on
+            <a href="https://github.com/Elam-parithi/Utube_DHW_5">github.com/Elam-parithi/Utube_DHW_5</a>
+        </p>
     </section>
     
     <section id="features">
         <h2>Key Features</h2>
         <ul>
             <li>Data extraction from YouTube API</li>
+            <li>Storing that data in JSON</li>
             <li>Comment sentiment analysis</li>
             <li>Channel and video analytics</li>
             <li>SQL and MongoDB integration</li>
         </ul>
+                
+        <h2>Modules used</h2>
+        <ul>
+            <li>Google YouTube API</li>
+            <li>Streamlit</li>
+            <li>streamlit annatotion text</li>
+            <li>SQLAlchemy</li>
+            <li>MongoDB API</li>
+            <li>Pandas</li>
+            <li>Natural Launguage Tool Kit</li>
+            <li>Matplotlib</li>
+            <li>seaborns</li>
+        </ul>
     </section>
     
+    <section id="app-Summary">
+        <h2>Summary</h2>
+        <p>
+            This product was writen by <a href="https://www.linkedin.com/in/elamparithi-t">Elamparithi</a>. This project was built by modules used above. Streamlit was limited
+            abilities. And it uses MySQL and MongoDB for data storage. This intention of this project was intended to
+            provide rich and premium look on UI and working application to
+            Also, this application will be rich in UI with premium colors despite using streamlit. 
+            Used Matplotlib with seabors for premium charts.  
+        </p>
+        <p>
+            for detials on how to clone and deploy for your self. look at the 
+            <a href="https://github.com/Elam-parithi/Utube_DHW_5/blob/main/README.md">README.md</a> file.
+        </p>
+        <h3># Config page:</h3>
+        <img src="images\config_page.PNG" alt="analysis result">
+        <p>
+            In config page we provide the API key from google website, and SQL and MongoDB URL and URI.
+            When you click on the connect button if passed the status bar will turn the color to green.
+            if it was in red the connection/key was not working. if in orange the no entry yet.
+            only MongoDB is optional. API key and MySQL URL was important.
+        </p><p>
+            For this configuration read the text above the entry button. Or you can go with detialed configuration
+            on <a href="https://github.com/Elam-parithi/Utube_DHW_5/blob/main/config_page.md">configuration.md</a> file.
+        </p>
+        <p>
+            you can also configure the secrets with streamlit secrets file. get how to configure at 
+            <a href="https://github.com/Elam-parithi/Utube_DHW_5/blob/main/secret_configuration.md">secret_configuration.md</a>
+            Also, keep your secret seperate and make sure to add it to <i>.gitignore</i> file.
+        </p>
+        <h3># Home Page</h3>
+        <img src="images\homepage.PNG" alt="Home page">
+        <p>
+            In his page we will extract the data from the Google's YouTube API. You enter multiple Channel names,
+            Channel ID in the entry box. It will automatically get the respective channel id with given channel name.
+            the max limit was set to 10. change that in configuration mention above.
+            <pre>
+                My advise is to select the channels with lower playlist,videos, comments. 
+                it can processed fast on testing time. And don't exced the free token limit.
+            </pre> 
+            In Background of this page the data was stored in <b>JSON file format</b> with date and time in it.
+            So, you can get multiple channels at any given time and process for visualization at any time.
+            More channels means more compute power and More tokens. Google's Free youtube API token was limited to 10,000 only.
+            For more detials visit <a href="https://developers.google.com/youtube/v3/getting-started">YouTube documentation</a>.
+        </p>
+        <h3># Storage page</h3>
+        <img src="images\storagepage.PNG" alt="Storage Page">
+        <p>
+            This page where the converted data was uploaded to MySQL and MongoDB. If you want to proccess with MongoDB click the checkbox.
+            Else leve it empty. And there will be download button shown. where you can download the JSON file for yourself.
+            This helps with Tableau. you can directly process the JSON file. <b>Upon clicking upload button, wait for the process to complete.</b>
+            It will show the time to complete on uploads.
+        </p>
+        <h3># Analysis page</h3>
+        <img src="images\analysis_page.PNG" alt="Analysis Page">
+        <p>
+            This Analaysis page gives 10 questions and code for that. 
+            upon clicking the data that will gives the result in dataframe.
+            stremlit data was limited to show only one table. so, make the query to display only one table.
+        </p>
+        <h4># Plot page</h4>
+        <img src="images\plotting_page.PNG" alt="Plotting page">
+        <p>
+            This plot page will display charts for comparison for channels, playlist, videos and comments with sentiment.
+            There are multiple charts can be added to this page. but made limited no of charts only. 
+            For more you can go with datavisualization tools.
+        </p>
+        
+
+
+
+
+    </section>
+
     <section id="contact">
         <h2>Contact</h2>
         <p>For more information, please contact:</p>
-        <p>Email: <a href="mailto:elamparithi@outlook.in">yourname@example.com</a></p>
+        <p>Github: <a href="https://github.com/Elam-parithi/Utube_DHW_5">github.com/Elam-parithi/Utube_DHW_5</a></p>
+        <p>Email: <a href="https://www.linkedin.com/in/elamparithi-t">linkedin.com/in/elamparithi-t</a></p>
     </section>
     
     <footer>
-        <p>&copy; 2024 YouTube Data Harvesting Project</p>
+        <p>YouTube Data Harvesting Project</p>
     </footer>
 </body>
 </html>

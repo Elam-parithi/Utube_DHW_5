@@ -3,27 +3,40 @@
 # This module only extract the YouTube data and present it as GUVI formated json file.
 # Additionally, it has a function to check api keys.
 
-import os, json
+import json
 import logging
-import requests
-from re import compile
+import os
 from datetime import datetime
+from re import compile
+
+import requests
+from httplib2 import Http
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from config_and_auxiliary import locate_log
 from config_and_auxiliary import directory_settings
 
-logging.basicConfig(encoding='utf-8')
-logger = logging.getLogger('Youtube_Extractor')
+
+exr_logfile = locate_log('exr', 'youtube_extractor.log')
+logging.basicConfig(level=logging.WARNING,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                    handlers=[logging.FileHandler(exr_logfile), logging.StreamHandler()]
+                    )
+exr_logger = logging.getLogger('Youtube_Extractor')
+exr_handler = logging.StreamHandler()
+exr_handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+exr_handler.stream = open('CON', 'w', encoding='utf-8')  # For Windows command prompt
+exr_logger.addHandler(exr_handler)
 
 
-def check_youtube_api_key(api_key: str):
+def check_youtube_api_key(utube_key: str):
     """
     Check for YouTube API key is valid or not. True if valid.
-    @param api_key:
+    @param utube_key:
     @return Bool:
     """
     try:
-        youtube = build('youtube', 'v3', developerKey=api_key)
+        youtube = build('youtube', 'v3', developerKey=utube_key)
         response = youtube.channels().list(part='snippet', id='UC_x5XG1OV2P6uZZ5FSM9Ttw').execute()
         print("API key is valid and working!")
         print("Channel Title:", response['items'][0]['snippet']['title'])
@@ -71,15 +84,27 @@ def check_api_key(function_api_key):
 
 class YouTubeDataExtractor:
     def __init__(self, youtube_api_key):
+        Http(timeout=60)  # this will set timeout for all the request.execute()
         self.channel_id_pattern = compile(r'^UC[a-zA-Z0-9-_]{22}$')
         self.youtube = None
-        self.is_connected = None
+        self.is_connected = False
         try:
-            self.youtube = build('youtube', 'v3', developerKey=youtube_api_key)
+            self.youtube = build('youtube', 'v3',
+                                 developerKey=youtube_api_key,cache_discovery=False)
+            # Note: A Token is wasted when running this.
+            self.youtube.channels().list(part='snippet', id='UC_x5XG1OV2P6uZZ5FSM9Ttw').execute()
             self.is_connected = True
         except HttpError as e:
             self.is_connected = False
-            logger.warning(f"API key validation failed. Error:{e}")
+            exr_logger.warning(f"API key validation failed. Error:{e}")
+            if e.resp.status == 403:
+                print("Invalid API key or quota exceeded.")
+            elif e.resp.status == 400:
+                print("Bad request. Possible misconfiguration.")
+            else:
+                print("An HTTP error occurred:", e)
+        except Exception as e:
+            print("An unexpected error occurred:", e)
 
     @staticmethod
     def process_urls(url_list: list) -> str:
@@ -100,7 +125,8 @@ class YouTubeDataExtractor:
         @param channel_name: channel name with string.
         @return: matching channel ID or None
         """
-        request = self.youtube.search().list(part='snippet', q=channel_name, type='channel', maxResults=1)
+        request = self.youtube.search().list(part='snippet', q=channel_name,
+                                             type='channel', maxResults=1)
         response = request.execute()
         if response['items']:
             return response['items'][0]['snippet']['channelId']
@@ -159,7 +185,7 @@ class YouTubeDataExtractor:
                 request = self.youtube.playlistItems().list_next(request, response)
             return [video['contentDetails']['videoId'] for video in videos]
         except HttpError as e:
-            logger.warning(f"Error fetching videos from playlist {playlist_id}:{e}")
+            exr_logger.warning(f"Error fetching videos from playlist {playlist_id}:{e}")
             return []
 
     def get_video_info(self, video_id: str):
@@ -212,10 +238,10 @@ class YouTubeDataExtractor:
             return comments
         except HttpError as e:
             if e.resp.status == 403 and e.error_details[0]['reason'] == 'commentsDisabled':
-                logger.info(f"Comments are disabled for video ID:{video_id}")
+                exr_logger.info(f"Comments are disabled for video ID:{video_id}")
                 return None
             else:
-                logger.warning(f"Error fetching comments for video {video_id}:{e}")
+                exr_logger.warning(f"Error fetching comments for video {video_id}:{e}")
                 return []
 
     def __comment_dict(self, video_id: str) -> dict:
@@ -250,14 +276,14 @@ class YouTubeDataExtractor:
         for video_counter, video_ID in enumerate(vlt, start=1):
             vlt_info = self.get_video_info(video_ID)
             if vlt_info is None:
-                logger.debug(f"video info of {video_ID} is :=> {vlt_info}")
+                exr_logger.debug(f"video info of {video_ID} is :=> {vlt_info}")
                 return videos_list, vlt
                 # if that video is deleted/blocked/censored videos_list is empty list and vlt is None
                 # Again use channel name 'GUVI' for testing this one.
             Vid_comment_count = vlt_info['statistics'].get('commentCount')
             if Vid_comment_count == '0':
                 # For testing use GUVI, It has blocked comments in its videos.
-                logger.info(f'There is no comments in this video{video_ID} = {vlt_info['snippet']['title']}, '
+                exr_logger.info(f'There is no comments in this video{video_ID} = {vlt_info['snippet']['title']}, '
                             f'comment count {Vid_comment_count}')
                 comment_dict: dict = {}
             else:
@@ -334,6 +360,7 @@ class YouTubeDataExtractor:
         @return: nested dictionary
         """
         channel_infos = self.get_channel_info(channel_id)
+        print(f"GUVI format initiated for {channel_infos['snippet']['title']}")
         if not channel_infos:
             return {}
         upload_playlistID = channel_infos["contentDetails"]["relatedPlaylists"]["uploads"]
@@ -350,19 +377,22 @@ class YouTubeDataExtractor:
                 "playlist":play_list
             }
         }
+        print(f"GUVI format completed for {channel_infos['snippet']['title']}")
         return guvi_format_data
 
 
 if __name__ == "__main__":
     from dotenv import load_dotenv
     from os import getenv
+
     load_dotenv('.secrets')
-    youtube_api_key = getenv('youtube_api_key')
-    print(youtube_api_key)
+    api_key = getenv('youtube_api_key')
+    print(api_key)
 
-    yt = YouTubeDataExtractor(youtube_api_key)
+    yt = YouTubeDataExtractor(api_key)
 
-    channel_list = ['madras foodie', 'GUVI', 'TheRegent', 'Chennaiipl', 'Behindwoods', 'ishitanifurnutires']
+    channel_list = ['madras foodie', 'GUVI', 'TheRegent', 'Chennaiipl',
+                    'Behindwoods', 'ishitanifurnutires']
 
     for channel_nm in channel_list:
         print(f"Extraction started for {channel_nm}")
@@ -370,4 +400,3 @@ if __name__ == "__main__":
         dt = yt.guvi_format(cid)
         save_path = save_dict_to_json(dt, channel_nm)
         print(f"Completed for {channel_nm} @ {save_path}")
-

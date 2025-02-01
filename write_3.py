@@ -25,11 +25,14 @@ import logging
 # SADeprecationWarning: The Session.close_all() method is deprecated and will be removed in a future release.
 # Please refer to session.close_all_sessions(). (deprecated since: 1.3)
 
-logfile = locate_log('app', 'write3.log')
-logging.basicConfig(level=logging.INFO,
+for handler in logging.getLogger("sqlalchemy").handlers:
+    logging.getLogger("sqlalchemy").removeHandler(handler)
+
+write3_log = locate_log('app', 'write_3.log')
+logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    handlers=[logging.FileHandler(log_file), logging.StreamHandler()])
-logger = logging.getLogger('write3')
+                    handlers=[logging.FileHandler(write3_log, encoding='utf-8')])
+write3_logger = logging.getLogger('write_3')
 
 
 class DB_writer:
@@ -82,14 +85,14 @@ class DB_writer:
         except sqlalchemy.exc.IntegrityError as e:  # sqlalchemy.exc.IntegrityError
             matches = re.findall(r"Duplicate entry", str(e))
             if 0 < len(matches):
-                print("Duplicate entry detected, passing the error up.")
+                write3_logger.debug("Duplicate entry detected, passing the error up.")
                 pass
             else:
                 self.session.rollback()  # Roll back the session after an error
-                logger.warning("foreign relations not found.")
-                logger.warning(f"Error occurred: {e}")
+                write3_logger.warning("foreign relations not found.")
+                write3_logger.warning(f"Error occurred: {e}")
         except pymysql.err.IntegrityError:
-            logger.warning("Pymysql error")
+            write3_logger.warning("Pymysql error")
 
     def write_to_sql(self, json_datum: dict):
         """
@@ -109,12 +112,12 @@ class DB_writer:
         )
         existing_channel = self.session.query(Channel_class).filter_by(channel_id=channel_chid).first()
         if not existing_channel:
-            logger.info(f"Adding new channel: {channel_record}")
+            write3_logger.info(f"Adding new channel: {channel_record}")
             self.write_handler(channel_record)
             self.session.commit()  # prevents integrity error
 
         else:
-            logger.debug(f"Channel {channel_chid} already exists. Skipping addition.")
+            write3_logger.debug(f"Channel {channel_chid} already exists. Skipping addition.")
 
         for playlist_data in channel_data["playlist"]:
             playlist_plid = playlist_data["playlist_ID"]
@@ -151,7 +154,7 @@ class DB_writer:
                 else:
                     vid_dbug = (f"Video with ID {video_record.video_id} - {video_record.video_name} "
                                 f"already exists. Skipping insertion.")
-                    logger.debug(vid_dbug)
+                    write3_logger.debug(vid_dbug)
 
                 for comment_dict in video_data["Comments"].values():
                     comment_cid = comment_dict["Comment_Id"]
@@ -191,7 +194,7 @@ class DB_writer:
             self.session.commit()
         except Exception as e:
             self.session.rollback()
-            logger.debug(f"Error Commenting: {e}")
+            write3_logger.debug(f"Error Commenting: {e}")
 
     def close_it(self):
         """

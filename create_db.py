@@ -20,9 +20,9 @@ import os
 """
 
 log_file = locate_log('app', 'create_db.log')
-logging.basicConfig(level=logging.INFO,
+logging.basicConfig(level=logging.WARNING,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    handlers=[logging.FileHandler(log_file)])
+                    handlers=[logging.FileHandler(log_file, encoding='utf-8')])
 logger = logging.getLogger('create_db')
 
 Base = declarative_base()
@@ -132,8 +132,8 @@ def check_create_database(connection_string: str):
             engine_local.dispose()
             logger.info("Connection closed.")
     # create Schema. If above try run well. no problem running below.
-    engine_tabled = create_engine(connection_string, echo=True)
-    Base.metadata.create_all(engine_tabled)
+    engine_tabled = create_engine(connection_string, echo=False)
+    Base.metadata.create_all(engine_tabled, checkfirst=True)
     logger.info("all Tables created.")
     return engine_tabled
 

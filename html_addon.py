@@ -18,6 +18,24 @@ def colour_pick(constructor):
     return output_colour
 
 
+download_button = """
+    <style>
+        .stDownloadButton {
+            font-size: small !important;
+            background-color: lightblue !important;
+            color: black !important;
+            border-radius: 5px !important;
+            padding: 8px 12px !important;
+            border: 1px solid black !important;
+            font-weight: bold !important;
+        }
+        .stDownloadButton:hover {
+            background-color: deepskyblue !important;
+        }
+    </style>
+"""
+
+
 def statusbar():
     api_color = colour_pick("youTube_API")
     sql_color = colour_pick("MySQL_URL")
@@ -34,4 +52,3 @@ def statusbar():
         """
     st.html(html_code)
     return
-

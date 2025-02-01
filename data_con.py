@@ -5,6 +5,7 @@
 import os
 import re
 import json
+import time
 import write_3
 import pandas as pd
 from pathlib import Path
@@ -75,19 +76,34 @@ class sql_tube:
                 self.is_connected = False
                 print(f"Error: {e}")
 
-    def json_2_sql(self, filepath):  # st.session_state["MySQL_URL"].json_2_sql(filename, file_name)
+    def json_2_sql(self, filepath):
         extracted_dir = directory_settings['extracted json folder']
         for file in filepath:
             full_path = os.path.join(extracted_dir, file)
             filename = os.path.basename(full_path)
+            # noinspection PyTypeChecker
             full_path = str(Path(full_path).with_suffix(".json"))
             print(full_path)
 
+            start_time = time.time()
             with open(full_path, 'r') as file_data:
-                print(f'processing {filename}...')
+                print(f'processing {filename}.json')
                 data = json.load(file_data)
                 self.writer.write_to_sql(data)
+            stop_time = time.time()
+            elapsed_time = stop_time - start_time
+            minutes = int(elapsed_time // 60)
+            seconds = elapsed_time % 60
+            print(f"{filename}.json process completed. Time Taken: {minutes} min {seconds:.2f} sec",end='\n\n')
+        start_time = time.time()
+        self.writer.sentiment_analysis_update()
+        stop_time = time.time()
+        elapsed_time = stop_time - start_time
+        minutes = int(elapsed_time // 60)
+        seconds = elapsed_time % 60
+        print(f"sentiment_analysis_update completed. Time Taken: {minutes} min {seconds:.2f} sec")
         self.writer.close_it()
+        return True
 
     def sql_read(self, query):
         df = None

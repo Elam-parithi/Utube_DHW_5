@@ -1,4 +1,3 @@
-
 from os import path, listdir
 from pathlib import Path
 import streamlit_tags
@@ -55,9 +54,6 @@ if procced_storage:
     else:
         raise KeyError
 
-
-import streamlit as st
-
 # Custom CSS for the button styling
 st.html(
     """
@@ -89,14 +85,16 @@ st.html(
     """
 )
 
+
 # Function to handle the button click event
 def button_clicked():
     st.write("Streamlit button pressed")
 
+
 # HTML for the button
 button_html = '<button class="custom-button" onclick="window.streamlitButtonClick()">Press Me!</button>'
 
-# Display the button using Streamlit's HTML component
+# Display the button using Streamlit 's HTML component
 st.html(button_html)
 
 # JavaScript code to connect the button click to Streamlit
@@ -115,10 +113,12 @@ st.html(
 if 'buttonClicked' not in st.session_state:
     st.session_state.buttonClicked = False
 
-# JavaScript callback handler for the button click
+
+# JavaScript callback exr_handler for the button click
 def js_event_listener():
     st.session_state.buttonClicked = True
     button_clicked()
+
 
 st.html(
     """

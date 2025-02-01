@@ -47,7 +47,7 @@ def plotting_bar(fig_point, x_label, y_label, dataframe):
 
 
 def analyze_page():
-    st.write("Multiple plots can be included in the project. But limited to few charts only.")
+    st.write("Multiple charts can be included in the project. But limited to few charts only.")
     st.subheader("Channel-wise Analysis")
 
     query = """
@@ -120,7 +120,8 @@ def analyze_page():
     axes[1].set_ylabel('Total View Count')
 
     # Third plot: Average Sentiment per Playlist
-    sns.barplot(data=playlist_df, x='playlist_name', y='average_sentiment', palette='deep', ax=axes[2])
+    sns.barplot(data=playlist_df, x='playlist_name', y='average_sentiment',
+                hue=None, palette='deep', ax=axes[2])
     axes[2].tick_params(axis='x', rotation=45)
     axes[2].set_title('Average Sentiment top 5 viewed Playlist')
     axes[2].set_xlabel('Playlist Name')
@@ -168,7 +169,7 @@ def analyze_page():
         # palette = sns.color_palette("husl", len(dataframe))  # Generate a color palette
         sns.histplot(
             data=sentiment_df, x='sentiment', hue='channel_name', kde=True,
-            bins=30, palette='tab10', ax=axes[0], legend=True)
+            palette='tab10', ax=axes[0], legend=True)
         axes[0].set_title("Distribution of Sentiment Scores by Channel")
         axes[0].set_xlabel("Sentiment Score")
         axes[0].set_ylabel("Frequency")

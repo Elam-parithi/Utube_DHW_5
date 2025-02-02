@@ -1,10 +1,11 @@
-temp/*
+temp
+Test_dir
 alchemy_process/
 Database_storage/
 
 
 Include/
-Notes/
+Notes
 Scripts/
 
 alchemy_process/Scrap_codes/
@@ -188,4 +189,5 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 
+/temp/
 /temp/

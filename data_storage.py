@@ -63,22 +63,22 @@ def Data_storage_tab():
                                                              help="select only the required one",
                                                              placeholder="Choose an option")
 
-        with storage_columns:
-            storage_option = ['SQL', 'MongoDB']
-            st.subheader("select Storage option:")
-            storage_sql = st.checkbox(storage_option[0], True, disabled=True)
-            checkbox_state = False
-            m1, m2 = st.columns([3, 7])
-            try:
-                checkbox_state = st.session_state.MongoDB_URI.is_connected
-            except AttributeError:
-                with m2:
-                    annotated_text(("MongoDB URI is not Connected.", "", "pink"))
-            with m1:
-                storage_mon = st.checkbox(storage_option[1], False, disabled=not checkbox_state,
-                                          label_visibility='visible')
+    with storage_columns:
+        storage_option = ['SQL', 'MongoDB']
+        st.subheader("select Storage option:")
+        storage_sql = st.checkbox(storage_option[0], True, disabled=True)
+        checkbox_state = False
+        m1, m2 = st.columns([3, 7])
+        try:
+            checkbox_state = st.session_state.MongoDB_URI.is_connected
+        except AttributeError:
+            with m2:
+                annotated_text(("MongoDB URI is not Connected.", "", "pink"))
+        with m1:
+            storage_mon = st.checkbox(storage_option[1], False, disabled=not checkbox_state,
+                                      label_visibility='visible')
 
-    if len(st.session_state.Selected_files) is not 0:
+    if len(st.session_state.Selected_files) != 0:
         st.divider()
         st.subheader("Download extracted data:")
         st.write("for keeping files on json format. use download buttons below.")

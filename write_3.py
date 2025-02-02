@@ -44,6 +44,8 @@ class DB_writer:
     @staticmethod
     def iso_duration_to_seconds(iso_duration: str) -> int:
         """
+
+
         Function to convert ISO duration to ss.
 
         @param iso_duration: str
@@ -81,17 +83,21 @@ class DB_writer:
         """
         try:
             with self.session.no_autoflush:
-                self.session.add(data_for_table)
+                if isinstance(data_for_table, list):
+                    self.session.bulk_save_objects(data_for_table)
+                else:
+                    self.session.add(data_for_table)
         except sqlalchemy.exc.IntegrityError as e:  # sqlalchemy.exc.IntegrityError
+            self.session.rollback()  # Roll back the session after an error
             matches = re.findall(r"Duplicate entry", str(e))
             if 0 < len(matches):
                 write3_logger.debug("Duplicate entry detected, passing the error up.")
                 pass
             else:
-                self.session.rollback()  # Roll back the session after an error
                 write3_logger.warning("foreign relations not found.")
                 write3_logger.warning(f"Error occurred: {e}")
         except pymysql.err.IntegrityError:
+            self.session.rollback()
             write3_logger.warning("Pymysql error")
 
     def write_to_sql(self, json_datum: dict):
@@ -114,10 +120,14 @@ class DB_writer:
         if not existing_channel:
             write3_logger.info(f"Adding new channel: {channel_record}")
             self.write_handler(channel_record)
-            self.session.commit()  # prevents integrity error
+            # self.session.commit()  # prevents integrity error
 
         else:
             write3_logger.debug(f"Channel {channel_chid} already exists. Skipping addition.")
+
+        playlist_records = []
+        video_records = []
+        comment_records = []
 
         for playlist_data in channel_data["playlist"]:
             playlist_plid = playlist_data["playlist_ID"]
@@ -126,7 +136,9 @@ class DB_writer:
                 channel_id=channel_chid,
                 playlist_name=playlist_data["playlist_title"]
             )
-            self.write_handler(playlist_record)
+            # self.write_handler(playlist_record)
+            playlist_records.append(playlist_record)
+
             for videos_dict in playlist_data["videos"]:
                 video_data = videos_dict[next(iter(videos_dict))]
                 video_vid = video_data['Video_Id']
@@ -148,8 +160,9 @@ class DB_writer:
 
                 )
                 if not self.session.query(Video_class).filter_by(video_id=video_vid).first():
-                    self.write_handler(video_record)
-                    self.session.commit()  # prevents integrity error on adding comments record
+                    video_records.append(video_record)
+                    # self.write_handler(video_record)
+                    # self.session.commit()  # prevents integrity error on adding comments record
                     # both playlist and videos writen here(commit)
                 else:
                     vid_dbug = (f"Video with ID {video_record.video_id} - {video_record.video_name} "
@@ -167,7 +180,14 @@ class DB_writer:
                         comment_published_date=self.convert_to_datetime(comment_dict["Comment_PublishedAt"])
                         # sentiment and sentiment_type will be processed separately for speed.
                     )
-                    self.write_handler(comment_record)
+                    # self.write_handler(comment_record)
+                    comment_records.append(comment_record)
+        if playlist_records:
+            self.write_handler(playlist_records)
+        if video_records:
+            self.write_handler(video_records)
+        if comment_records:
+            self.write_handler(comment_records)
         self.session.commit()  # for playlist as it is flushed on video processing. this only process comments records.
 
     def sentiment_analysis_update(self):
@@ -199,11 +219,11 @@ class DB_writer:
     def close_it(self):
         """
         Closing session and engine.
-        Session.close_all - SADeprecationWarning not suppressed.
         @return: None
         """
-        self.session.close_all()
-        self.engine.dispose()
+        self.session.close()
+        if self.engine:
+            self.engine.dispose()
 
 
 if __name__ == "__main__":

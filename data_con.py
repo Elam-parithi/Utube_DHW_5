@@ -94,7 +94,7 @@ class sql_tube:
             elapsed_time = stop_time - start_time
             minutes = int(elapsed_time // 60)
             seconds = elapsed_time % 60
-            print(f"{filename}.json process completed. Time Taken: {minutes} min {seconds:.2f} sec",end='\n\n')
+            print(f"{filename}.json process completed. Time Taken: {minutes} min {seconds:.2f} sec", end='\n\n')
         start_time = time.time()
         self.writer.sentiment_analysis_update()
         stop_time = time.time()
@@ -126,6 +126,7 @@ class mongo_tube:
     """
     This class is for writing the data to the Mongo database.
     """
+
     def __init__(self, connection_string=None):
         self.mongo_uri = connection_string
         self.client = None

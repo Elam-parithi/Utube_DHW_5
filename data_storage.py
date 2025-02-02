@@ -1,15 +1,15 @@
 # data_storage.py
 # This is data_storage here we process the data we extracted in home page.
 from os import path
-from pathlib import Path
 import zipfile
-import time
 from data_con import *
 from annotated_text import annotated_text
 from html_addon import download_button
-from config_and_auxiliary import custom_annotation, directory_settings
+from config_and_auxiliary import directory_settings
 
 directory = Path(directory_settings['extracted json folder'])
+mongodb_name = 'YouTube_DHW'
+mongo_collection = "extration_upload"
 
 
 def zip_files(file_list, zip_filename):
@@ -99,8 +99,10 @@ def Data_storage_tab():
                 if storage_mon:
                     us_mon = time.time()
                     if st.session_state["MongoDB_URI"].is_connected:
-                        st.session_state["MongoDB_URI"].JSON_2_mongo(JSON_filename=json_file, DB_name=db_name,
-                                                                     collection=collection_name)
+                        for json_filed in st.session_state.Selected_files:
+                            st.session_state["MongoDB_URI"].JSON_2_mongo(JSON_filename=Path(f"{directory}/{json_filed}.json"),
+                                                                         DB_name=mongodb_name,
+                                                                         collection=mongo_collection)
                         st.session_state["MongoDB_URI"].close_mongo()
                         ue_mon = time.time()
                         elapsed_time = us_mon - ue_mon

@@ -1,9 +1,9 @@
-# YouTube Data Harvesting and Warehousing
+# [YouTube Data Harvesting and Warehousing](https://elam-parithi.github.io/Utube_DHW_5/)
 
 <a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-Logo.png" alt="linkedin.com" width="100" height="35"></a>
 
 ## Overview
-This project focuses on harvesting data from YouTube and warehousing it using SQL, with a frontend interface built using Streamlit. It allows users to efficiently collect, store, and analyze YouTube data.
+This project focuses on harvesting data from YouTube and warehousing it using SQL, with a frontend interface built using Streamlit. It allows users to efficiently collect, store, and analyze YouTube data. Additional details available on [Utube_DHW_5](https://elam-parithi.github.io/Utube_DHW_5/) hosted using github pages.
 ## Tech used
 - MySQL 
 - Streamlit
@@ -57,7 +57,7 @@ To run the application, initiate `main.py`:
    ```
 OR directly run the application file `Utube_website.py`:
    ```bash
-   streamlit run Utube_website.py
+   streamlit run extractor_app.py
    ```
 ## Contact
 Feel free to reach out via 

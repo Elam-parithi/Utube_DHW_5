@@ -1,3 +1,7 @@
+
+[server]
+headless = true
+
 [theme]
 
 # From Bannanatree tutorial

@@ -3,6 +3,7 @@
 from os import path
 import zipfile
 from data_con import *
+import streamlit as st
 from annotated_text import annotated_text
 from html_addon import download_button
 from config_and_auxiliary import directory_settings
@@ -101,7 +102,7 @@ def Data_storage_tab():
                     if st.session_state["MongoDB_URI"].is_connected:
                         for json_filed in st.session_state.Selected_files:
                             st.session_state["MongoDB_URI"].JSON_2_mongo(JSON_filename=Path(f"{directory}/{json_filed}.json"),
-                                                                         DB_name=mongodb_name,
+                                                                         DataBase_name=mongodb_name,
                                                                          collection=mongo_collection)
                         st.session_state["MongoDB_URI"].close_mongo()
                         ue_mon = time.time()

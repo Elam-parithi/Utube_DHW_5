@@ -31,6 +31,27 @@ logger.addHandler(handler)
 img = Image.open(basic_settings['image_path'])
 img = img.resize((16, 16))
 
+# Streamlit session state initialization
+configurations = {
+    "first_run":True,
+    # values
+    "api_key":API_key,
+    "mysql_config":database_URI,
+    "mongo_config":MongoDB_URI,
+    # constructor
+    "youTube_API":None,
+    "MySQL_URL":None,
+    "MongoDB_URI":None,
+    # others
+    "file_lists":None,
+    "json_result":None,
+    "Selected_files":None,
+}
+
+for key, value in configurations.items():
+    if key not in st.session_state:
+        st.session_state[key] = value
+
 # Streamlit page configuration
 st.set_page_config(
     page_title="Utube DHW 5",

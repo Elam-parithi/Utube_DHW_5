@@ -93,6 +93,7 @@ class YouTubeDataExtractor:
                                  developerKey=youtube_api_key,cache_discovery=False)
             # Note: A Token is wasted when running this.
             self.youtube.channels().list(part='snippet', id='UC_x5XG1OV2P6uZZ5FSM9Ttw').execute()
+            print("YouTube API connected successfully.")
             self.is_connected = True
         except HttpError as e:
             self.is_connected = False

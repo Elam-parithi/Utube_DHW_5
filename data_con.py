@@ -1,194 +1,1 @@
-# data_con.py
-
-# this module is to connect with SQL server and upload data.
-
-import os
-import re
-import json
-import time
-import write_3
-import pandas as pd
-from pathlib import Path
-import streamlit as st
-from sqlalchemy import text
-from dotenv import load_dotenv
-from pymongo import MongoClient
-from sqlalchemy.exc import SQLAlchemyError
-from create_db import check_create_database
-from config_and_auxiliary import directory_settings
-
-
-class sql_tube:
-    @staticmethod
-    def URL_unmatch_toast():
-        st.error("Invalid MySQL URL format! Please use a format like:"
-                 "mysql+pymysql://<username>:<password>@<host>:<port>/<dbname>")
-
-    def validate_sql_url(self, url):
-        """
-        Validates a given URL to ensure it follows the MySQL connection URL format.
-        Displays Streamlit pop-up errors if the URL is invalid.
-
-        Args:
-            url (str): The MySQL connection URL.
-        """
-
-        mysql_pattern = r'^mysql\+pymysql://.+@.+/.+$'
-        sqlite_pattern = r'^sqlite:///?.+\.db$'
-
-        if re.match(mysql_pattern, url):
-            mysql_url_pattern = re.compile(
-                r"^mysql\+pymysql://"
-                r"(?P<username>[^:@]+):(?P<password>[^@]+)@"
-                r"(?P<host>[^:/]+):(?P<port>[0-9]+)/(?P<dbname>[a-zA-Z0-9_]+)$"
-            )
-            match = mysql_url_pattern.match(url)
-            if not match:
-                self.URL_unmatch_toast()
-                return False
-            else:
-                return True
-        elif re.match(sqlite_pattern, url):
-            st.error("Already, removed support of SQLite. Because, "
-                     "when running test on channels likes and others has big integer sqlite does not support it. "
-                     "work around is possible. But, I'm sticking with MySQL")
-            self.URL_unmatch_toast()
-            return False
-
-    def __init__(self, url=None):
-        self.connection_str = url
-        self.connection = None
-        self.is_connected = None
-        self.writer = None
-        self.engine = None
-        """
-        Creates and returns a SQLAlchemy engine based on the database type and configuration.
-        local DB: sqlite:///Database_storage/Utube_DHW-5.db
-        MySQL: mysql+pymysql://username:password@host:port/dbname
-        """
-        if True:
-            try:
-                self.engine = check_create_database(self.connection_str)
-                self.writer = write_3.DB_writer(self.engine)
-                self.connection = self.engine.connect()
-                self.is_connected = True
-            except SQLAlchemyError as e:
-                self.is_connected = False
-                print(f"Error: {e}")
-
-    def json_2_sql(self, filepath):
-        extracted_dir = directory_settings['extracted json folder']
-        for file in filepath:
-            full_path = os.path.join(extracted_dir, file)
-            filename = os.path.basename(full_path)
-            # noinspection PyTypeChecker
-            full_path = str(Path(full_path).with_suffix(".json"))
-            print(full_path)
-
-            start_time = time.time()
-            with open(full_path, 'r') as file_data:
-                print(f'processing {filename}.json')
-                data = json.load(file_data)
-                self.writer.write_to_sql(data)
-            stop_time = time.time()
-            elapsed_time = stop_time - start_time
-            minutes = int(elapsed_time // 60)
-            seconds = elapsed_time % 60
-            print(f"{filename}.json process completed. Time Taken: {minutes} min {seconds:.2f} sec", end='\n\n')
-        start_time = time.time()
-        self.writer.sentiment_analysis_update()
-        stop_time = time.time()
-        elapsed_time = stop_time - start_time
-        minutes = int(elapsed_time // 60)
-        seconds = elapsed_time % 60
-        print(f"sentiment_analysis_update completed. Time Taken: {minutes} min {seconds:.2f} sec")
-        self.writer.close_it()
-        return True
-
-    def sql_read(self, query):
-        df = None
-        try:
-            df = pd.read_sql_query(text(query), self.engine)
-        except Exception as e:
-            print(f"Error executing query: {e}")
-        finally:
-            return df
-
-    def close_sql(self):
-        # closing connection
-        if self.connection is not None:
-            self.connection.close()
-            self.is_connected = False
-            self.engine.dispose()
-
-
-class mongo_tube:
-    """
-    This class is for writing the data to the Mongo database.
-    """
-
-    def __init__(self, connection_string=None):
-        self.mongo_uri = connection_string
-        self.client = None
-        self.is_connected = False  # Set to False initially
-        try:
-            self.client = MongoClient(self.mongo_uri)
-            self.client.server_info()  # Check if the connection is successful
-            self.is_connected = True
-            print("mongo_tube connected successfully.")
-        except Exception as e:
-            self.is_connected = False
-            print(f"Failed to connect to MongoDB: {e}")
-
-    def JSON_2_mongo(self, JSON_filename, DB_name, collection) -> None:
-        """
-        This method call the json file and read it then write to the database and collection
-        in Database.
-        @param JSON_filename: JSON file path or the file name in the current dir.
-        @param DB_name: Database name in the MongoDB
-        @param collection: Collection Name in the DB
-        @return: None
-        """
-        if not self.is_connected:
-            print("Not connected to MongoDB. Cannot upload data.")
-            return
-        try:
-            db = self.client[DB_name]
-            collection = db[collection]
-            # Load the JSON file
-            with open(JSON_filename, 'r') as file:
-                data = json.load(file)
-            # Handle single vs. multiple documents
-            if isinstance(data, list):
-                collection.insert_many(data)
-                print(f"Inserted {len(data)} documents into '{collection}' collection.")
-            else:
-                collection.insert_one(data)
-                print(f"Inserted one document into '{collection}' collection.")
-        except Exception as e:
-            print(f"An error occurred while uploading JSON to MongoDB: {e}")
-
-    def close_mongo(self):
-        """
-        closes the MongoDB connection and the client.
-        @return: None
-        """
-        if self.client:
-            self.client.close()
-            self.is_connected = False  # Update the connection status
-            print("MongoDB connection closed.")
-
-
-# Example usage
-if __name__ == "__main__":
-    load_dotenv('.secrets')
-    uri = os.getenv('uri')
-    json_file = 'your_json_file.json'  # Update with your file path
-    db_name = 'YouTube_DHW'
-    collection_name = 'your_collection_name'
-
-    mongo_instance = mongo_tube(uri)
-
-    if mongo_instance.is_connected:
-        mongo_instance.JSON_2_mongo(json_file, db_name, collection_name)
-        mongo_instance.close_mongo()
+# data_con.py# this module is to connect with SQL server and upload data.import reimport jsonimport gridfsimport datetimeimport pymysql.errimport pandas as pdimport sqlalchemy.ormimport sqlalchemy.excfrom pathlib import Pathfrom sqlalchemy import textfrom pandas import DataFramefrom dotenv import load_dotenvfrom pymongo import MongoClientfrom sqlalchemy.exc import SQLAlchemyErrorfrom create_db import *from NLTK_Sentiment import CommentAnalyzerfrom config_and_auxiliary import directory_settings"""    Author: Elamparithi     Last Update: 04 feb 2025    Not functional as of last update."""# todo: parse full code to chatgpt and get this code completed.#  or try using gemini, if not leave it on time consuming code and move on to other projects.# Logging setupfor handler in logging.getLogger("sqlalchemy").handlers:    logging.getLogger("sqlalchemy").removeHandler(handler)write3_log = locate_log('oth', 'datacon.log')logging.basicConfig(level=logging.WARNING,                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',                    handlers=[logging.FileHandler(write3_log, encoding='utf-8')])write3_logger = logging.getLogger('datacon')# Directory loaded.extracted_dir = directory_settings['extracted json folder']class sql_tube:    def __init__(self, url=None):        self.connection_str = url        self.engine = None        try:            self.engine = check_create_database(self.connection_str)            Class_Session = sqlalchemy.orm.sessionmaker(bind=self.engine)            self.session = Class_Session()        except pymysql.err.OperationalError as e:            write3_logger.error(f"OperationalError: {e}")            print("Database access error! Check user permissions.")            self.engine = None  # Ensure engine is set to None if connection fails        except SQLAlchemyError as e:            print(f"SQLAlchemy Error: {e}")    @staticmethod    def iso_duration_to_seconds(iso_duration: str) -> int:        """        Function to convert ISO duration to ss.        @param iso_duration: str        @return: int        """        match = re.match(r'PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?', iso_duration)        if not match:            if iso_duration == "P0D":                return 0            else:                raise ValueError(f"Invalid ISO 8601 duration format: {iso_duration}")        hh = int(match.group(1) or 0)        mm = int(match.group(2) or 0)        ss = int(match.group(3) or 0)        total_seconds = hh * 3600 + mm * 60 + ss        return total_seconds    @staticmethod    def convert_to_datetime(date_string: str) -> datetime.datetime:        """        Function to return SQL friendly date and time.        @param date_string:        @return: SQL Data and Time format        """        # this is for use in Video_class        date_string = date_string.rstrip('Z')        return datetime.datetime.strptime(date_string, '%Y-%m-%dT%H:%M:%S')    def write_handler(self, data_for_table):        """        Optimized function for batch inserting data into SQL.        """        try:            if isinstance(data_for_table, list):                # self.session.add_all(data_for_table)                for item in data_for_table:                    print(**item)            else:                self.session.add(data_for_table)        except sqlalchemy.exc.IntegrityError as e:            self.session.rollback()            write3_logger.warning(f"Integrity Error: {e}")            print(f"Integrity Error")        except Exception as e:            self.session.rollback()            write3_logger.error(f"Unexpected error: {e}")            print("Unexpected error")        finally:            self.session.commit()            self.session.expunge_all()    def write_to_sql(self, json_datum: dict):        """        Write json data to SQL with for loop.        @param json_datum: entire json file as nested dict. (GUVI format only: from youtube_extractor.py)        @return: None        """        # self.engine.execute(text("SET FOREIGN_KEY_CHECKS=0;"))        channel_data = json_datum[next(iter(json_datum))]        channel_chid = channel_data["Channel_Id"]        channel_record = Channel_class(            channel_id=channel_chid,            channel_name=channel_data["Channel_Name"],            channel_type=channel_data["Channel_type"],            channel_views=channel_data["Channel_Views"],            channel_description=channel_data["Channel_Description"],            channel_status=str(channel_data["Channel_Status"])        )        existing_channel = self.session.query(Channel_class).filter_by(channel_id=channel_chid).first()        if not existing_channel:            write3_logger.info(f"Adding new channel: {channel_record}")            self.write_handler(channel_record)            print(f"\t├── Channel written")        else:            write3_logger.debug(f"Channel {channel_chid} already exists. Skipping addition.")        playlist_records = []        video_records = []        comment_records = []        for playlist_data in channel_data["playlist"]:            playlist_plid = playlist_data["playlist_ID"]            playlist_record = Playlist_class(                playlist_id=playlist_plid,                channel_id=channel_chid,                playlist_name=playlist_data["playlist_title"]            )            playlist_records.append(playlist_record)            for videos_dict in playlist_data["videos"]:                video_data = videos_dict[next(iter(videos_dict))]                video_vid = video_data['Video_Id']                video_record = Video_class(                    video_id=video_vid,                    playlist_id=playlist_plid,                    channel_id=channel_chid,                    video_name=video_data["Video_Name"],                    video_description=video_data["Caption_Status"],                    published_date=self.convert_to_datetime(video_data["PublishedAt"]),                    view_count=video_data["View_Count"],                    like_count=video_data["Like_Count"],                    dislike_count=video_data["Dislike_Count"],                    favorite_count=video_data["Favorite_Count"],                    comment_count=video_data["Comment_Count"],                    duration=self.iso_duration_to_seconds(video_data["Duration"]),                    thumbnail=video_data["Thumbnail"],                    caption_status=video_data["Caption_Status"],                )                if not self.session.query(Video_class).filter_by(video_id=video_vid).first():                    video_records.append(video_record)                else:                    vid_dbug = (f"Video with ID {video_record.video_id} - {video_record.video_name} "                                f"already exists. Skipping insertion.")                    write3_logger.debug(vid_dbug)                for comment_dict in video_data["Comments"].values():                    comment_cid = comment_dict["Comment_Id"]                    comment_ctext = comment_dict["Comment_Text"]                    comment_record = Comment_class(                        comment_id=comment_cid,                        video_id=video_vid,                        comment_text=comment_ctext,                        comment_author=comment_dict["Comment_Author"],                        comment_published_date=self.convert_to_datetime(comment_dict["Comment_PublishedAt"])                    )                    comment_records.append(comment_record)        def por_lites(gemini: list):            act_len = len(gemini)            uni_len = len(list(set(gemini)))            mis_len = act_len - uni_len            return f"{act_len} - {mis_len}"        if playlist_records:            self.write_handler(playlist_records)            print(f"\t├── {por_lites(playlist_records)} playlist written")        if video_records:            # self.write_handler(video_records)            insert_query = """                INSERT INTO video (                    video_id, video_name, video_description,                     upload_id, tags, published_date, published_time,                     view_count, like_count, favourite_count,                     comment_count, duration, thumbnail, caption_status                )                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)            """            try:                cursor = self.session.connection().connection.cursor()                cursor.executemany(text(insert_query), video_records)                self.session.commit()                print("Bulk insert successful!")            except Exception as e:                self.session.rollback()                print(f"Bulk insert error: {e}")            print(f"\t└── {por_lites(video_records)} comments written")        if comment_records:            # self.write_handler(comment_records)            self.session.bulk_insert_mappings(Comment_class, comment_records)            print(f"\t└── {por_lites(comment_records)} comments written")    def sentiment_analysis_update(self):        """        separate method for reading and updating the table with sentiment and sentiment_type.        processing the comment text when running the extraction        will increase the extraction time. Also, might lead to other issues.        """        nltk_analyzer = CommentAnalyzer()        comments = self.session.query(Comment_class).all()        for comment in comments:            content_text = comment.comment_text            compound_result = nltk_analyzer.analyze_sentiment(content_text)            if compound_result:                sentiment_string = nltk_analyzer.sentiment_type(compound_result)                comment.sentiment = compound_result['compound']                comment.sentiment_type = sentiment_string                self.session.add(comment)        try:            self.session.commit()        except Exception as e:            self.session.rollback()            write3_logger.debug(f"Error Commenting: {e}")    def json_2_sql(self, file_paths: list) -> bool:        for file_name in file_paths:            extr_fullpath = str(os.path.join(extracted_dir, file_name))            joined_fullpath = Path(extr_fullpath).with_suffix(".json")            json_fullpath = str(joined_fullpath)            with open(json_fullpath, 'r') as opened_file:                dictionary_data = json.load(opened_file)                self.write_to_sql(dictionary_data)        self.sentiment_analysis_update()        return True    def sql_read(self, query: str) -> DataFrame | None:        """        Gets the SQLquery and provides the result.        @param query: str        @return: DataFrame | None        """        try:            return pd.read_sql_query(text(query), self.engine)        except Exception as e:            print(f"Error executing query: {e}")            return None    def close_sql(self):        """        Closing session and engine.        @return: None        """        self.session.close()        if self.engine:            self.engine.dispose()class mongo_tube:    def __init__(self, connection_string=None):        self.mongo_uri = connection_string        self.client = None        try:            self.client = MongoClient(self.mongo_uri)            self.client.server_info()            print("MongoDB connected successfully.")        except Exception as e:            print(f"Failed to connect to MongoDB: {e}")    def JSON_2_mongo(self, JSON_filename, DataBase_name, collection):        """        Uploads the data        @param JSON_filename:        @param DataBase_name:        @param collection:        @return:        """        try:            db = self.client[DataBase_name]            fs = gridfs.GridFS(db)            with open(JSON_filename, 'rb'):                file_id = fs.put(file, filename=JSON_filename)                db[collection].insert_one({"file_id":file_id, "filename":JSON_filename})        except Exception as e:            print(f"MongoDB upload error: {e}")    def close_mongo(self):        """        Closes the MongoDB engine.        @return:        """        if self.client:            self.client.close()# Example usageif __name__ == "__main__":    extracted_dir: str = r"extracted_data"    load_dotenv('.secrets')    URL_word = os.getenv('URL_word')    writer = sql_tube(url=URL_word)    filepath = ['SpaceRex-20250131-095147.json',  # 'Akshay Expeditions-20250202-144107.json',                'The Regent-20250202-143959.json', 'Elamparithi -20250202-144134.json',                'GUVI-20250202-114916.json']    for file in filepath:        full_path = os.path.join(extracted_dir, file)        filename = os.path.basename(full_path)        with open(full_path, 'r') as file_data:            print(f' preprocessing {filename}...')            data = json.load(file_data)            writer.write_to_sql(data)    print("Data writen to sql, updating sentiment")    writer.sentiment_analysis_update()    print("Sentiment update complete")    writer.close_sql()    print("Session closed and engine disposed.")    """load_dotenv('.secrets')    uri = os.getenv('uri')    json_file = 'your_json_file.json'  # Update with your file path    db_name = 'YouTube_DHW'    collection_name = 'your_collection_name'    mongo_instance = mongo_tube(uri)    if mongo_instance.is_connected:        mongo_instance.JSON_2_mongo(json_file, db_name, collection_name)        mongo_instance.close_mongo()"""

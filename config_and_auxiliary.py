@@ -67,6 +67,8 @@ log_location = {
     "oth":r"logs/others"
 }
 
+folder_path = [r'./extracted_data',
+               r'./logs']
 
 def locate_log(short_code: str, filename: str):
     """
@@ -74,7 +76,7 @@ def locate_log(short_code: str, filename: str):
     Manually include .log extension in filename.
     @param short_code: three word shortcode
     @param filename: filename with extension
-    @return: filepath with filename
+    @return: file_paths with filename
     """
     if short_code not in log_location.keys():
         return os.path.join(r'logs', filename)
@@ -185,30 +187,7 @@ if not API_key:
 if not database_URI:
     database_URI = "sqlite:///Database_storage/Utube_DHW-5.db"
 
-# Streamlit session state initialization
-configurations = {
-    "first_run":True,
-    # values
-    "api_key":API_key,
-    "mysql_config":database_URI,
-    "mongo_config":MongoDB_URI,
-    # constructor
-    "youTube_API":None,
-    "MySQL_URL":None,
-    "MongoDB_URI":None,
-    # others
-    "file_lists":None,
-    "json_result":None,
-    "Selected_files":None,
-}
-
-for key, value in configurations.items():
-    if key not in st.session_state:
-        st.session_state[key] = value
-
-folder_path = [r'./extracted_data',
-               r'./logs']
-
+#create the folder if the folder path does not exists
 for folder_name_str in folder_path:
     folder_name = Path(folder_name_str)
     if not folder_name.exists():

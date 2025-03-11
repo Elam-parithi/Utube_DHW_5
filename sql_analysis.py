@@ -60,14 +60,14 @@ def Selections_work():
                      "ORDER BY channels.channel_name;")
 
     elif selection == query_list[1]:
-        sql_query = ("SELECT DISTINCT channels.channel_name, COUNT(Videos.video_id) AS Total_Videos FROM channels \n"
-                     "JOIN Videos ON channels.channel_id = Videos.channel_id GROUP BY channels.channel_name \n"
-                     "ORDER BY Total_Videos DESC;")
+        sql_query = ("""SELECT DISTINCT channels.channel_name, COUNT(videos.video_id) AS Total_Videos FROM channels
+JOIN videos ON channels.channel_id = videos.channel_id GROUP BY channels.channel_name
+ORDER BY Total_Videos DESC;""")
 
     elif selection == query_list[2]:
-        sql_query = ("SELECT channels.channel_name, Videos.video_name, Videos.view_count AS Total_Views FROM Videos\n"
-                     "JOIN channels ON channels.channel_id = Videos.channel_id\n"
-                     "ORDER BY Videos.view_count DESC LIMIT 10;")
+        sql_query = ("""SELECT channels.channel_name, videos.video_name, videos.view_count AS Total_Views FROM videos
+JOIN channels ON channels.channel_id = videos.channel_id
+ORDER BY videos.view_count DESC LIMIT 10;""")
 
     elif selection == query_list[3]:
         sql_query = ("SELECT videos.video_name, videos.comment_count AS Total_Comments FROM videos\n"

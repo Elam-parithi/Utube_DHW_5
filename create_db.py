@@ -15,7 +15,7 @@ import os
 
 """
     Author: Elamparithi 
-    Last Update: 17 nov 24
+    Last Update: 04 feb 2025
     Fully functional as of last update.
 """
 
@@ -30,6 +30,7 @@ Base = declarative_base()
 
 class Channel_class(Base):
     __tablename__ = 'channels'
+
     channel_id = Column(String(255), unique=True, primary_key=True, comment="Unique identifier for the table")
     channel_name = Column(String(255), nullable=False, comment="Name of the channel")
     channel_type = Column(String(255), nullable=False, comment="Type of the channel")
@@ -40,20 +41,39 @@ class Channel_class(Base):
     playlists = relationship("Playlist_class", back_populates="channel_relation", cascade="all, delete-orphan")
     videos = relationship("Video_class", back_populates="channel_relation", cascade="all, delete-orphan")
 
+    def __repr__(self):
+        return str({
+            "channel_id":self.channel_id,
+            "channel_name":self.channel_name,
+            "channel_type":self.channel_type,
+            "channel_views":self.channel_views,
+            "channel_description":self.channel_description,
+            "channel_status":self.channel_status
+        })
+
 
 class Playlist_class(Base):
     __tablename__ = 'playlists'
-    playlist_id = Column(String(255), nullable=False, primary_key=True, comment="Unique identifier for the playlist")
+
+    playlist_id = Column(String(255), primary_key=True, comment="Unique identifier for the playlist")
     channel_id = Column(String(255), ForeignKey("channels.channel_id"), nullable=False, comment="Channel reference")
     playlist_name = Column(String(255), nullable=False, comment="Name of the playlist")
 
     channel_relation = relationship("Channel_class", back_populates="playlists")
     videos = relationship("Video_class", back_populates="playlist_relation", cascade="all, delete-orphan")
 
+    def __repr__(self):
+        return str({
+            "playlist_id":self.playlist_id,
+            "channel_id":self.channel_id,
+            "playlist_name":self.playlist_name
+        })
+
 
 class Video_class(Base):
     __tablename__ = 'videos'
-    video_id = Column(String(255), nullable=False, primary_key=True, comment="Unique identifier for the video")
+
+    video_id = Column(String(255), primary_key=True, comment="Unique identifier for the video")
     playlist_id = Column(String(255), ForeignKey('playlists.playlist_id'), comment="Playlist reference")
     channel_id = Column(String(255), ForeignKey("channels.channel_id"), nullable=False, comment="Channel reference")
     video_name = Column(String(255), nullable=False, comment="Name of the video")
@@ -73,19 +93,51 @@ class Video_class(Base):
     playlist_relation = relationship("Playlist_class", back_populates="videos")
     comments = relationship("Comment_class", back_populates="video_relation", cascade="all, delete-orphan")
 
+    def __repr__(self):
+        return str({
+            # unwanted data is commented
+            "video_id":self.video_id,
+            # "playlist_id":self.playlist_id,
+            # "channel_id":self.channel_id,
+            "video_name":self.video_name,
+            # "video_description":self.video_description,
+            # "published_date":self.published_date.isoformat() if self.published_date else None,
+            # "view_count":self.view_count,
+            # "like_count":self.like_count,
+            # "dislike_count":self.dislike_count,
+            # "favorite_count":self.favorite_count,
+            "comment_count":self.comment_count,
+            # "duration":self.duration,
+            # "thumbnail":self.thumbnail,
+            # "caption_status":self.caption_status
+        })
+
 
 class Comment_class(Base):
     __tablename__ = 'comments'
+
     id = Column(Integer, primary_key=True, autoincrement=True, comment="Primary key ID for unique identification")
     comment_id = Column(String(255), nullable=False, comment="Unique identifier for the comment")
     video_id = Column(String(255), ForeignKey('videos.video_id'), nullable=False, comment="Video reference")
     comment_text = Column(Text, nullable=False, comment="Text of the comment")
     comment_author = Column(String(255), nullable=False, comment="Name of the comment author")
     comment_published_date = Column(DateTime, nullable=False, comment="Date and time when the comment was published")
-    sentiment = Column(Float, comment="sentiment value for given comment comments.")
-    sentiment_type = Column(String(20), comment="sentiment type for given comments.")
+    sentiment = Column(Float, comment="Sentiment value for given comment")
+    sentiment_type = Column(String(20), comment="Sentiment type for given comments")
 
     video_relation = relationship("Video_class", back_populates="comments")
+
+    def __repr__(self):
+        return str({
+            "id":self.id,
+            "comment_id":self.comment_id,
+            "video_id":self.video_id,
+            "comment_text":self.comment_text,
+            "comment_author":self.comment_author,
+            "comment_published_date":self.comment_published_date.isoformat() if self.comment_published_date else None,
+            "sentiment":self.sentiment,
+            "sentiment_type":self.sentiment_type
+        })
 
 
 def separate_connection_string(conn_string: str):
@@ -120,7 +172,12 @@ def check_create_database(connection_string: str):
     connection_URL, connection_Schema = separate_connection_string(connection_string)
     logger.info(f"Connection URL: {connection_URL}")
     logger.info(f"Connection Schema: {connection_Schema}")
-    engine_local = create_engine(connection_URL, echo=False)
+    engine_local = create_engine(connection_URL, echo=False,
+                                 pool_size=20,  # Max connections in the pool
+                                 max_overflow=10,   # Extra connections beyond pool_size
+                                 pool_timeout=30,   # Time to wait before giving up on a connection
+                                 pool_recycle=1800)  # Recycle connections after 30 minutes
+
     with engine_local.connect() as conn:
         try:
             conn.execute(CreateSchema(connection_Schema))

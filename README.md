@@ -1,9 +1,13 @@
 # [YouTube Data Harvesting and Warehousing](https://elam-parithi.github.io/Utube_DHW_5/)
 
-<a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-Logo.png" alt="linkedin.com" width="100" height="35"></a>
+<a href="https://www.linkedin.com/in/elamparithi-t/"><img src="Icons/LI-Logo.png" alt="linkedin.com" width="120" height="40"></a>
 
 ## Overview
-This project focuses on harvesting data from YouTube and warehousing it using SQL, with a frontend interface built using Streamlit. It allows users to efficiently collect, store, and analyze YouTube data. Additional details available on [Utube_DHW_5](https://elam-parithi.github.io/Utube_DHW_5/) hosted using github pages.
+This project focuses on harvesting data from YouTube and warehousing it using SQL, with a frontend interface built using Streamlit. It allows users to efficiently collect, store, and analyze YouTube data. Additional details available on [Utube_DHW_5](https://elam-parithi.github.io/Utube_DHW_5/) hosted using GitHub pages.
+
+## Utube_DHW link
+[elam-parithi.github.io/Utube_DHW_5](https://elam-parithi.github.io/Utube_DHW_5/)
+
 ## Tech used
 - MySQL 
 - Streamlit
@@ -48,6 +52,8 @@ This project focuses on harvesting data from YouTube and warehousing it using SQ
     ```bash
     pip install -r requirements.txt
     ```
+   if you are facing installing with this file. go with `manual_requirenments.txt` file.
+   Installing with different operating system or environment leads to this error.
 5. set '.streamlit/secrets.toml' file:
    - Read [secret_configuration.md](secret_configuration.md) for configuring secrets.toml file.
 ### Running the Application
